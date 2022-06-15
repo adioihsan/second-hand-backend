@@ -1,8 +1,8 @@
 
 module.exports = {
   development: {
-      username: 'postgres',
-      password: "123",
+      username: 'postgres',  // TODO : Pakai data dari .env, LOCAL_DB_USERNAME
+      password: "123",       // TODO : Pakai data dari .env, LOCAL_DB_PASSWORD
       database: "db_2ndhand",
       host: "127.0.0.1",
       dialect: "postgres"

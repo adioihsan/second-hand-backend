@@ -1,8 +1,8 @@
 
 const response = require('../../utils/formatResponse');
 
+// Error Handling untuk menangani Error di JWT
 module.exports = (err, req, res, next) => {
-    console.log("Masuk Sini");
     console.log(err);
     if (!res.headersSent) {
         if (err.message === 'No auth token') {

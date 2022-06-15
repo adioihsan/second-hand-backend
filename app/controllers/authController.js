@@ -16,10 +16,10 @@ module.exports = {
           user_id: users.id 
         })
         console.log(userDetail)
-        // TODO : ADD OTP TO VERIFY EMAIL
+        // TODO : ADD OTP TO VERIFY EMAIL SOON?
         // const otp = await Otp.create({})
         // console.log(otp)
-        // TODO : ADD Feature Verify EMAIL
+        // TODO : ADD Email link or OTP to Verify EMAIL SOON? , Kalau tidak males 
         if (userDetail) {
           const mailOptions = {
             from: 'Second Hand App',
