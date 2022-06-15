@@ -5,7 +5,6 @@ module.exports = {
     getAllApi: (req, res) => {
         user.findAll()
         .then((usergame) => {
-            //pakai ini untuk swagger
             res.status(200).json({ message: "Success", usergame }) 
         })
         .catch((err) => {
