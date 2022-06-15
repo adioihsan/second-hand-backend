@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('otp', {
+    await queryInterface.createTable('otps', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -9,13 +9,16 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       code: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: true
       },
       user_id: {
-        type: Sequelize.INTEGER
-      },
-      expired: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'id'
+        }
       },
       created_at: {
         allowNull: false,
