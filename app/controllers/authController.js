@@ -16,7 +16,6 @@ module.exports = {
           name: name,
           user_id: users.id 
         })
-        console.log(userDetail)
         // TODO : ADD OTP CODE TO VERIFY EMAIL SOON?
         const otp = await Otp.create({
           user_id: users.id
@@ -77,6 +76,7 @@ module.exports = {
       return response(res, 500, false, 'Internal Server Error');
     }
   },
+  // POST /forgot-password
   postForgotPassword: async (req, res) => {
     try {
       const { email } = req.body;
@@ -120,6 +120,7 @@ module.exports = {
       return response(res, 500, false, 'Internal Server Error');
     }  
   },
+  // POST /reset-password
   postResetPassword: async (req, res) => {
     try {
       const { email, code, password } = req.body;
@@ -146,8 +147,8 @@ module.exports = {
       if(user.Otp.code !== parseInt(code)) {
         return response(res, 400, false, 'OTP is incorrect', null);
       }
-      const dateNow = new Date().getTime()
-      const dateUpdated = user.Otp.updatedAt.getTime()
+      const dateNow = new Date().getTime() // ambil waktu sekarang
+      const dateUpdated = user.Otp.updatedAt.getTime() // ambil tanggal update otp
       const expire_in = 120000 // 2 minutes
       const dateExpired = dateUpdated + expire_in
       if (dateNow > dateExpired) {
