@@ -1,8 +1,9 @@
 /** @format */
 
-const { User, UserDetail } = require('../models');
+const { User, UserDetail, Otp } = require('../models');
 const response = require('../../utils/formatResponse');
 const emailTransporter = require('../libs/email.js');
+const { emailWelcome, emailForgotPassword } = require('../../utils/emailFormat');
 
 module.exports = {
   // POST /register
@@ -15,30 +16,15 @@ module.exports = {
           name: name,
           user_id: users.id 
         })
-        console.log(userDetail)
-        // TODO : ADD OTP TO VERIFY EMAIL SOON?
-        // const otp = await Otp.create({})
+        // TODO : ADD OTP CODE TO VERIFY EMAIL SOON?
+        const otp = await Otp.create({
+          user_id: users.id
+        })
         // console.log(otp)
         // TODO : ADD Email link or OTP to Verify EMAIL SOON? , Kalau tidak males 
-        if (userDetail) {
-          const mailOptions = {
-            from: 'Second Hand App',
-            to: email,
-            subject: 'Verify your email',
-            text: `Welcome to Second Hand App,`,
-            html: `<!doctype html>
-                    <html>
-                    <head>
-                        <meta name="viewport" content="width=device-width">
-                        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-                        <title>Simple Transactional Email</title>
-                    </head>
-                    <body>
-                        <p>Welcome to Second Hand App </p>
-                    </body>
-                    </html>`
-          }
-          emailTransporter.sendMail(mailOptions, (err, info) => {
+        if (userDetail && otp) {
+          // Mengirim email
+          emailTransporter.sendMail(emailWelcome(name, email), (err, info) => {
             if (err) {
                 console.log(err)
                 return response(res, 500, false, err.message, null)
@@ -50,6 +36,7 @@ module.exports = {
         }
         return response(res, 500, false, 'Register Failed', null)
       }
+      return response(res, 500, false, 'Register Failed', null)
     } catch (err) {
       console.log(err);
       if (err.name === 'SequelizeUniqueConstraintError') {
@@ -85,6 +72,94 @@ module.exports = {
         token: user.generateToken(name, image)
       })
     } catch (err) {
+      console.log(err);
+      return response(res, 500, false, 'Internal Server Error');
+    }
+  },
+  // POST /forgot-password
+  postForgotPassword: async (req, res) => {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        return response(res, 400, false, 'Email is empty');
+      }
+      const isEmail = (email) => {
+        const regex = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/ // Email validation menggunakan RegEx
+        return regex.test(email);
+      }
+      if (!isEmail(email)) {
+        return response(res, 400, false, 'Email is invalid');
+      }
+      const user = await User.findOne({ 
+        where: { email: email },
+        include: [{ model: Otp }]    
+      });
+      if (!user) {
+        return response(res, 404, false, 'User not found', null);
+      } 
+      const dataOTP = {
+        code: Math.floor(Math.random() * 1000000),
+        user_id: user.id
+      }
+      console.log(user);
+      const otp = await user.Otp.update(dataOTP)
+      if (otp) {
+        // Mengirim email
+        emailTransporter.sendMail(emailForgotPassword(email, dataOTP.code), (err, info) => {
+          if (err) {
+              return response(res, 500, false, err.message, null)
+          } else {
+              console.log(info)
+          }
+        })
+        return response(res, 200, true, 'OTP has been sent, Please check your email!', null)
+      }
+      return response(res, 500, false, 'Internal Server Error', null)
+    } catch (err) {
+      console.log(err);
+      return response(res, 500, false, 'Internal Server Error');
+    }  
+  },
+  // POST /reset-password
+  postResetPassword: async (req, res) => {
+    try {
+      const { email, code, password } = req.body;
+      const isEmail = (email) => {
+        const regex = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/; // Email validation menggunakan RegEx
+        return regex.test(email);
+      }
+      if (!isEmail(email)) {
+        return response(res, 400, false, 'Email is invalid');
+      }
+      if (!code) {
+        return response(res, 400, false, 'Code is empty');
+      }
+      if (!password) {
+        return response(res, 400, false, 'Password is empty');
+      }
+      const user = await User.findOne({
+        where: { email: email },
+        include: [{ model: Otp }]
+      });
+      if (!user) {
+        return response(res, 404, false, 'User not found', null);
+      }
+      if(user.Otp.code !== parseInt(code)) {
+        return response(res, 400, false, 'OTP is incorrect', null);
+      }
+      const dateNow = new Date().getTime() // ambil waktu sekarang
+      const dateUpdated = user.Otp.updatedAt.getTime() // ambil tanggal update otp
+      const expire_in = 120000 // 2 minutes
+      const dateExpired = dateUpdated + expire_in
+      if (dateNow > dateExpired) {
+        return response(res, 404, false, 'OTP Expired', null)
+      }
+      const updateUser = user.update({ password: password })
+      if (updateUser) {
+        return response(res, 200, true, 'Password has been updated', null)
+      }
+      return response(res, 500, false, 'Internal Server Error', null)
+    } catch {
       console.log(err);
       return response(res, 500, false, 'Internal Server Error');
     }
