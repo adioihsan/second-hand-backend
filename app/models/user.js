@@ -8,6 +8,9 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       this.hasOne(models.UserDetail, {foreignKey: 'user_id'})
       this.hasOne(models.Otp, {foreignKey: 'user_id'})
+      this.hasMany(models.product, {foreignKey: 'user_id'})
+      this.hasMany(models.negotiation, {foreignKey: 'user_id'})
+      this.hasMany(models.wishlist, {foreignKey: 'user_id'})
     }
 
     static register = async ({ email, password }) => {
