@@ -10,14 +10,14 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      this.belongsTo(models.User, {foreignKey: 'user_id'})
     }
   }
   negotiation.init({
     user_id_buyer: DataTypes.INTEGER,
     product_id: DataTypes.INTEGER,
     price: DataTypes.INTEGER,
-    status: DataTypes.STRING
+    status: DataTypes.ENUM
   }, {
     sequelize,
     tableName: 'negotiations',
