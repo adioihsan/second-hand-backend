@@ -7,10 +7,7 @@ var app = express();
 var dotenv = require('dotenv').config();
 const multer = require('multer')()
 var indexRouter = require('./routes/index');
-
-// view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
+const response = require('./utils/formatResponse')
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -30,10 +27,12 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  
+  const status = err.status || 500;
+  if (err.name === "NotFoundError") {
+    return response(res, status, false, "Not Found", null)
+  } 
+  return response(res, false, status, err.message, null)
 });
 
 module.exports = app;
