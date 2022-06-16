@@ -39,7 +39,7 @@ module.exports = {
                 return response(res, 400, false, error.message, null);
             } else if (error.name === 'SequelizeValidationError') { // Ketika Validasi Dari Input Salah, Bisa tau name error coba liat di console, ada bagian error name.. 
                 return response(res, 400, false, error.errors[0].message, null);
-            }
+            } // Kalau mau nambahin lagi boleh, tinggal namenya error di else if
             return response(res, 500, false, "Internal Server Error", null); // Jika Error Lainnya, 
         }
     },
