@@ -10,17 +10,21 @@ module.exports = {
       },
       product_id: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: 'categories',
           key: 'id'
-        }
+        },
+        onDelete: 'cascade'
       },
       category_id: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: 'categories',
           key: 'id'
-        }
+        },
+        onDelete: 'cascade'
       },
       created_at: {
         allowNull: false,
