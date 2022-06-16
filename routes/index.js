@@ -16,8 +16,8 @@ router.get('/', function(req, res, next) {
 /* API Auth */
 router.post('/register', authController.postRegister);
 router.post('/login', authController.postLogin);
-// router.post("/forgot-password", authController.postForgotPassword);  // TODO: send email dengan isi otp
-// router.post("/reset-password", authController.postResetPassword);    // TODO: reset password dengan mencocokan otp
+router.post("/forgot-password", authController.postForgotPassword);  // TODO: send email dengan isi otp
+router.post("/reset-password", authController.postResetPassword);    // TODO: reset password dengan mencocokan otp
 
 router.put('/user-detail', auth, uploudSingle, userController.putUserDetail);
 router.get('/user-detail', auth, userController.getUserDetail);
