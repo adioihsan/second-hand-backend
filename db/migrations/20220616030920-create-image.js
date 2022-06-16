@@ -17,7 +17,8 @@ module.exports = {
         references: {
           model: 'products',
           key: 'id'
-        }
+        },
+        onDelete: 'cascade'
       },
       created_at: {
         allowNull: false,

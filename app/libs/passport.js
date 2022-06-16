@@ -1,6 +1,6 @@
 const passport = require('passport')
 const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt')
-const { User } = require('../models')
+const { user } = require('../models')
 
 /* Passport JWT Options */
 const options = {
@@ -12,11 +12,11 @@ const options = {
 passport.use(new JwtStrategy(options, async (payload, done) => {
     // payload adalah hasil terjemahan JWT, sesuai dengan apa yang kita masukkan di parameter pertama dari jwt.sign
 
-    const user = await User.findByPk(payload.id) // Cari user yang datanya bakal dikirim ke middleware auth.js
+    const data = await user.findByPk(payload.id) // Cari user yang datanya bakal dikirim ke middleware auth.js
     if(!user) {
         return done(null, false)
     }
-    return done(null, user)
+    return done(null, data)
 }))
 
 module.exports = passport

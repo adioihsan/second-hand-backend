@@ -1,4 +1,4 @@
-const { User, UserDetail } = require("../models");
+const { user, user_detail } = require("../models");
 const response = require("../../utils/formatResponse"); 
 
 module.exports = {
@@ -7,13 +7,13 @@ module.exports = {
             const jwtData = req.user  // Ngambil Data dari req.body isinya data user, didapat dari passport-JWT
             const { name, city, address, phone } = req.body;
             const filename = req.file ? req.file.filename : null;
-            const user = await User.findOne({  
+            const userData = await user.findOne({  
                 where: { id: jwtData.id }, 
-                include: { model: UserDetail } 
+                include: { model: user_detail } 
             });
             
             var UserDetailData = {}
-            if (!user) { return response(res, 404, false, 'User not found', null) }
+            if (!userData) { return response(res, 404, false, 'User not found', null) }
             if (filename) {
                 UserDetailData = {                      
                     name: name,
@@ -30,7 +30,7 @@ module.exports = {
                     phone: phone
                 }
             }
-            const updatedUserDetail= await user.UserDetail.update(UserDetailData);
+            const updatedUserDetail= await userData.user_detail.update(UserDetailData);
             if (updatedUserDetail) { return response(res, 200, true, 'User Detail Updated!', updatedUserDetail) }
             return response(res, 400, false, 'Update failed!', null)
         } catch (error) {
@@ -46,8 +46,8 @@ module.exports = {
     getUserDetail: async (req, res) => { 
         try {
             const jwtData = req.user; // Ngambil Data dari req.body isinya data user, didapat dari passport-JWT
-            console.log("JWT : ", jwtData); // coba liat data nya
-            const userDetail = await UserDetail.findOne({ 
+            // console.log("JWT : ", jwtData); // coba liat data nya
+            const userDetail = await user_detail.findOne({ 
                 where: { user_id: jwtData.id }
             });
             if (!userDetail) { return response(res, 404, false, 'User Detail not found', userDetail) }
