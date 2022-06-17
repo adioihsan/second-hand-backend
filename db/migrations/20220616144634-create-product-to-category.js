@@ -1,22 +1,27 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('otps', {
+    await queryInterface.createTable('product_to_categories', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      code: {
-        type: Sequelize.INTEGER,
-        allowNull: true
-      },
-      user_id: {
+      product_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'users',
+          model: 'categories',
+          key: 'id'
+        },
+        onDelete: 'cascade'
+      },
+      category_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'categories',
           key: 'id'
         },
         onDelete: 'cascade'
@@ -27,11 +32,11 @@ module.exports = {
       },
       updated_at: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('otp');
+    await queryInterface.dropTable('product_to_categories');
   }
 };

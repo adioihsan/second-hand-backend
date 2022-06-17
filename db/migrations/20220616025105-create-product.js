@@ -26,10 +26,14 @@ module.exports = {
         }
       },
       is_release: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false // false: not release, true: release
       },
       status: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: true // false: sold, true: available
       },
       created_at: {
         allowNull: false,
