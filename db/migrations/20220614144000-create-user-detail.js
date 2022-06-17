@@ -30,7 +30,8 @@ module.exports = {
         references: {
           model: 'users',
           key: 'id'
-        }
+        },
+        onDelete: 'cascade'
       },
       created_at: {
         allowNull: false,

@@ -5,6 +5,7 @@ const errorHandleJWT = require('../app/libs/errorHandlePassport');
 
 const auth = require('../app/middlewares/auth');
 const userController = require("../app/controllers/userController")
+const categoriesController = require("../app/controllers/categoriesController")
 const authController = require('../app/controllers/authController')
 const { uploudSingle, uploadMultiple } = require('../app/middlewares/multer')
 
@@ -27,6 +28,8 @@ router.get('/user-detail', auth, userController.getUserDetail);
 // router.delete('/product/:id', auth, userController.deleteProduct);   // TODO: delete product by id
 // router.get('/products', auth, userController.getProducts);           // TODO: get all product dengan filter category dan sear
 
+router.get('/categories', auth, categoriesController.getCategories);
+router.get('/category/:id', auth, categoriesController.getCategory);
 
 router.use(errorHandleJWT)
 

@@ -1,6 +1,6 @@
 /** @format */
 
-const { User, UserDetail, Otp } = require('../models');
+const { user, user_detail, otp } = require('../models');
 const response = require('../../utils/formatResponse');
 const emailTransporter = require('../libs/email.js');
 const { emailWelcome, emailForgotPassword } = require('../../utils/emailFormat');
@@ -10,19 +10,18 @@ module.exports = {
   postRegister: async (req, res) => {
     try {
       const { name, email, password } = req.body
-      const users = await User.register({ email, password })
+      const users = await user.register({ email, password })
       if (users) { 
-        const userDetail = await UserDetail.create({
+        const userDetail = await user_detail.create({
           name: name,
           user_id: users.id 
         })
         // TODO : ADD OTP CODE TO VERIFY EMAIL SOON?
-        const otp = await Otp.create({
+        const otpData = await otp.create({
           user_id: users.id
         })
-        // console.log(otp)
         // TODO : ADD Email link or OTP to Verify EMAIL SOON? , Kalau tidak males 
-        if (userDetail && otp) {
+        if (userDetail && otpData) {
           // Mengirim email
           emailTransporter.sendMail(emailWelcome(name, email), (err, info) => {
             if (err) {
@@ -55,21 +54,20 @@ module.exports = {
       if (!(email && password)) {
         return response(res, 400, false, 'Email or Password is empty');
       }
-      const user = await User.findOne({ 
+      const userData = await user.findOne({ 
         where: { email: email },
-        include: [{ model: UserDetail }]
+        include: [{ model: user_detail }]
       });
-      if (!user) {
+      if (!userData) {
         return response(res, 404, false, 'User not found', null);
       }
-      if (!user.checkPassword(password)) {
+      if (!userData.checkPassword(password)) {
         return response(res, 401, false, 'Password is incorrect', null);
       }
-      const name = user.UserDetail.name;
-      const image = user.UserDetail.image;
+      const name = userData.user_detail.name;
+      const image = userData.user_detail.image;
       return response(res, 200, true, 'Login success', {
-        user: user,
-        token: user.generateToken(name, image)
+        token: userData.generateToken(name, image)
       })
     } catch (err) {
       console.log(err);
@@ -90,22 +88,20 @@ module.exports = {
       if (!isEmail(email)) {
         return response(res, 400, false, 'Email is invalid');
       }
-      const user = await User.findOne({ 
+      const userData = await user.findOne({ 
         where: { email: email },
-        include: [{ model: Otp }]    
+        include: [{ model: otp }]    
       });
-      if (!user) {
+      if (!userData) {
         return response(res, 404, false, 'User not found', null);
       } 
-      const dataOTP = {
+      const otpData = await userData.otp.update({
         code: Math.floor(Math.random() * 1000000),
-        user_id: user.id
-      }
-      console.log(user);
-      const otp = await user.Otp.update(dataOTP)
-      if (otp) {
+        user_id: userData.id
+      })
+      if (otpData) {
         // Mengirim email
-        emailTransporter.sendMail(emailForgotPassword(email, dataOTP.code), (err, info) => {
+        emailTransporter.sendMail(emailForgotPassword(email, otpData.code), (err, info) => {
           if (err) {
               return response(res, 500, false, err.message, null)
           } else {
@@ -137,18 +133,18 @@ module.exports = {
       if (!password) {
         return response(res, 400, false, 'Password is empty');
       }
-      const user = await User.findOne({
+      const userData = await user.findOne({
         where: { email: email },
-        include: [{ model: Otp }]
+        include: [{ model: otp }]
       });
-      if (!user) {
+      if (!userData) {
         return response(res, 404, false, 'User not found', null);
       }
-      if(user.Otp.code !== parseInt(code)) {
+      if(userData.otp.code !== parseInt(code)) {
         return response(res, 400, false, 'OTP is incorrect', null);
       }
       const dateNow = new Date().getTime() // ambil waktu sekarang
-      const dateUpdated = user.Otp.updatedAt.getTime() // ambil tanggal update otp
+      const dateUpdated = userData.otp.updatedAt.getTime() // ambil tanggal update otp
       const expire_in = 120000 // 2 minutes
       const dateExpired = dateUpdated + expire_in
       if (dateNow > dateExpired) {

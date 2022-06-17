@@ -20,7 +20,7 @@ module.exports = {
       is_verified: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: false
+        defaultValue: false // false: not verified, true: verified
       },
       created_at: {
         allowNull: false,
