@@ -28,8 +28,7 @@ router.get('/user-detail', auth, userController.getUserDetail);
 // router.delete('/product/:id', auth, userController.deleteProduct);   // TODO: delete product by id
 // router.get('/products', auth, userController.getProducts);           // TODO: get all product dengan filter category dan sear
 
-router.get('/categories', auth, categoriesController.getCategories);
-router.get('/category/:id', auth, categoriesController.getCategory);
+router.get('/categories', auth, categoriesController.getCategories)
 
 router.use(errorHandleJWT)
 
