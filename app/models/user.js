@@ -4,10 +4,10 @@ const { encrypt, comparePassword} = require('../../utils/encrypt')
 const jwt = require('jsonwebtoken');
 
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
+  class user extends Model {
     static associate(models) {
-      this.hasOne(models.UserDetail, {foreignKey: 'user_id'})
-      this.hasOne(models.Otp, {foreignKey: 'user_id'})
+      this.hasOne(models.user_detail, {foreignKey: 'user_id'})
+      this.hasOne(models.otp, {foreignKey: 'user_id'})
       this.hasMany(models.product, {foreignKey: 'user_id'})
       this.hasMany(models.negotiation, {foreignKey: 'user_id'})
       this.hasMany(models.wishlist, {foreignKey: 'user_id'})
@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
     }
 
   }
-  User.init({
+  user.init({
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -74,8 +74,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     tableName: 'users',
-    modelName: 'User',
+    modelName: 'user',
     underscored: true,
   });
-  return User;
+  return user;
 };

@@ -1,29 +1,41 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+'use strict'
+const { Model } = require('sequelize')
+
 module.exports = (sequelize, DataTypes) => {
   class product extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
       this.hasMany(models.image, {foreignKey: 'product_id'})
       this.hasMany(models.wishlist, {foreignKey: 'product_id'})
       this.hasMany(models.negotiation, {foreignKey: 'product_id'})
-      // this.belongtoMany(models.product_to_category, {foreignKey: 'product_id'})
-      this.belongsTo(models.User, {foreignKey: 'user_id'})
+      this.belongsTo(models.user, {foreignKey: 'user_id'})
+      this.belongsToMany(models.category, {through: 'product_to_categories', foreignKey: 'product_id'})
     }
   }
   product.init({
-    name: DataTypes.STRING,
-    price: DataTypes.INTEGER,
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    price: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        isInt: { msg: 'Price must be integer' },
+        min: 0
+      }
+    },
     description: DataTypes.STRING,
     user_id: DataTypes.INTEGER,
-    is_release: DataTypes.BOOLEAN,
-    status: DataTypes.BOOLEAN
+    is_release: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false // false: not release, true: release
+    },
+    status: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false // false: not available, true: available
+    }
   }, {
     sequelize,
     tableName: 'products',
