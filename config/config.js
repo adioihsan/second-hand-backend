@@ -1,8 +1,8 @@
 
 module.exports = {
   development: {
-      username: 'postgres',
-      password: 'admin', 
+      username: "postgres",  
+      password: "admin",  
       database: "db_2ndhand",
       host: "127.0.0.1",
       dialect: "postgres"
