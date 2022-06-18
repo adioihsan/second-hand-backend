@@ -22,11 +22,13 @@ router.post("/reset-password", authController.postResetPassword);    // TODO: re
 
 router.put('/user-detail', auth, uploudSingle, userController.putUserDetail);
 router.get('/user-detail', auth, userController.getUserDetail);
-// router.post('/product', auth, uploadMultiple, userController.postProduct);   // TODO: insert product dan upload multiple image
-// router.put('/product/:id', auth, uploadMultiple, userController.putProduct); // TODO: update product dan upload multiple image, kalau bisa dihapus image yang diganti
-// router.get('/product/:id', auth, userController.getProduct);         // TODO: get product by id
+
+router.post('/product', auth, uploadMultiple, userController.postProduct);   
+router.put('/product/:id', auth, uploadMultiple, userController.putProduct); // TODO: update product dan upload multiple image, kalau bisa dihapus image yang diganti
 // router.delete('/product/:id', auth, userController.deleteProduct);   // TODO: delete product by id
-// router.get('/products', auth, userController.getProducts);           // TODO: get all product dengan filter category dan sear
+
+router.get('/product/:id', auth, userController.getProduct);         // TODO: get product by id
+router.get('/products', auth, userController.getProducts);           // TODO: get all product dengan filter category dan sear
 
 router.get('/categories', auth, categoriesController.getCategories)
 
