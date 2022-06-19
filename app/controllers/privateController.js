@@ -117,28 +117,8 @@ module.exports = {
                 return response(res, 500, false, "Internal Server Error", null);
             }
         }
-    },
-    getProduct: async (req, res) => {
-        try {
-            const id = req.params.id;
-            const productData = await product.findOne({ 
-                where: { id: id },
-                include: [
-                    { model: user, attributes: ['id', 'email'] },
-                    { model: image, attributes: ['id','url'] },
-                    { model: category, attributes: ['id', 'name'] , through: { attributes: [] } }
-                ],
-            })
-            if (!productData) { return response(res, 404, false, 'Product not found', null) }
-            return response(res, 200, true, 'Success', productData);
-        } catch (error) {
-            console.log(error);
-            if (error.name === 'SequelizeDatabaseError') {
-                return response(res, 400, false, error.message, null);
-            }
-            return response(res, 500, false, "Internal Server Error", null);
-        }
-    },
+    },  
+    putProduct: async (req, res) => {},
     deleteProduct: async (req, res) => {
         try {
             const jwtData = req.user;
@@ -164,69 +144,6 @@ module.exports = {
                 return response(res, 200, true, 'Product Deleted!', deletedProduct)
             }
             return response(res, 400, false, 'Delete failed!', null)
-        } catch (error) {
-            console.log(error);
-            if (error.name === 'SequelizeDatabaseError') {
-                return response(res, 400, false, error.message, null);
-            }
-            return response(res, 500, false, "Internal Server Error", null);
-        }
-    },
-    putProduct: async (req, res) => {},
-    getProducts: async (req, res) => {
-        try {
-            const category_id = req.query.category_id
-            const search = req.query.search || ''
-            // Setup Pagination
-            const page = parseInt(req.query.page) || 1
-            if (page < 1) {
-                return response(res, 400, false, 'Page must be integer greater than 0', null)
-            }
-            const limit = 12
-            const offset = (parseInt(page) - 1) * limit
-            var query = {} 
-            if (category_id) {
-                query = {
-                    where: {
-                        // : Apabila menggunakan menggunakan DB Postgres harus menggunakan iLike, Like untuk MySQL
-                        [Op.or]: [
-                            { name: { [Op.iLike]: `%${search}%` } },
-                            { description: { [Op.iLike]: `%${search}%` } }
-                        ],
-                    },
-                    attributes: ['id', 'name', 'price', 'description', 'createdAt'],
-                    limit: limit,
-                    offset: offset,
-                    include: [
-                        { model:image, attributes: ['id', 'url'], limit: 1 },
-                        { model: category, attributes: ['id', 'name'] , through: { attributes: [] },  where: { id: category_id } },
-                    ]
-                }
-            } else {
-                query = {
-                    where: {
-                        [Op.or]: [
-                            // : Apabila menggunakan menggunakan DB Postgres harus menggunakan iLike, Like untuk MySQL
-                            { name: { [Op.iLike]: `%${search}%` } },
-                            { description: { [Op.iLike]: `%${search}%` } }
-                        ],
-                    },
-                    attributes: ['id', 'name', 'price', 'description'],
-                    limit: limit,
-                    offset: offset,
-                    include: [
-                        { model: category, attributes: ['id', 'name'] , through: { attributes: [] } },
-                        { model: image, attributes: ['id','url'], limit:1  }
-                    ]
-                }
-            }
-            const productData = await product.findAndCountAll(query)
-            productData.totalPage = Math.ceil(productData.count / limit)
-            productData.page = parseInt(page)
-            productData.nextPage = page < productData.totalPage ? parseInt(page) + 1 : null
-            productData.prevPage = page > 1 ? parseInt(page) - 1 : null
-            return response(res, 200, true, 'Success', productData);
-
         } catch (error) {
             console.log(error);
             if (error.name === 'SequelizeDatabaseError') {

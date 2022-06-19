@@ -6,8 +6,8 @@ var logger = require('morgan');
 var app = express();
 var dotenv = require('dotenv').config();
 const multer = require('multer')()
-var indexRouter = require('./routes/index');
 const response = require('./utils/formatResponse')
+const indexRouter = require('./routes/index');
 
 app.use(logger('dev'));
 app.use(express.json());
