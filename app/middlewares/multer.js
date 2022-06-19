@@ -11,7 +11,7 @@ const getUserId = (req) => {
 const storage = multer.diskStorage({
     destination: "public/images/",
     filename: (req, file, cb) => {
-        cb(null, getUserId(req) + '_' + Date.now() + path.extname(file.originalname));
+        cb(null, getUserId(req) + '_' + Date.now() + '_' +  Math.floor(Math.random() * 100000) + path.extname(file.originalname));
     },
 });
 

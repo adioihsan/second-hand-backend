@@ -17,18 +17,18 @@ router.get('/', function(req, res, next) {
 /* API Auth */
 router.post('/register', authController.postRegister);
 router.post('/login', authController.postLogin);
-router.post("/forgot-password", authController.postForgotPassword);  // TODO: send email dengan isi otp
-router.post("/reset-password", authController.postResetPassword);    // TODO: reset password dengan mencocokan otp
+router.post("/forgot-password", authController.postForgotPassword); 
+router.post("/reset-password", authController.postResetPassword);    
 
 router.put('/user-detail', auth, uploudSingle, userController.putUserDetail);
 router.get('/user-detail', auth, userController.getUserDetail);
 
 router.post('/product', auth, uploadMultiple, userController.postProduct);   
 router.put('/product/:id', auth, uploadMultiple, userController.putProduct); // TODO: update product dan upload multiple image, kalau bisa dihapus image yang diganti
-// router.delete('/product/:id', auth, userController.deleteProduct);   // TODO: delete product by id
-
-router.get('/product/:id', auth, userController.getProduct);         // TODO: get product by id
-router.get('/products', auth, userController.getProducts);           // TODO: get all product dengan filter category dan sear
+router.delete('/product/:id', auth, userController.deleteProduct); 
+  
+router.get('/product/:id', userController.getProduct);         
+router.get('/products', userController.getProducts);  
 
 router.get('/categories', auth, categoriesController.getCategories)
 
