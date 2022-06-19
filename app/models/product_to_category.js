@@ -1,7 +1,6 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const {  Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class product_to_category extends Model {
     static associate(models) {
@@ -15,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     category_id: DataTypes.INTEGER
   }, {
     sequelize,
+    tableName: 'product_to_categories',
     modelName: 'product_to_category',
     underscored: true,
   });

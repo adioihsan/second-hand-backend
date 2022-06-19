@@ -15,6 +15,11 @@ module.exports = (sequelize, DataTypes) => {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'Name is required'
+        }
+      }
     },
     price: {
       type: DataTypes.INTEGER,
@@ -24,8 +29,18 @@ module.exports = (sequelize, DataTypes) => {
         min: 0
       }
     },
-    description: DataTypes.STRING,
-    user_id: DataTypes.INTEGER,
+    description: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        isInt: { msg: 'User id must be integer' },
+        min: 1
+      }
+    },
     is_release: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

@@ -1,10 +1,17 @@
 const multer = require('multer');
 const path = require("path");
+
+// get user id from token
+const getUserId = (req) => {
+    const jwtData = req.user;
+    return jwtData.id;
+}
+
 // Set Storage Engine
 const storage = multer.diskStorage({
     destination: "public/images/",
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
+        cb(null, getUserId(req) + '_' + Date.now() + '_' +  Math.floor(Math.random() * 100000) + path.extname(file.originalname));
     },
 });
 
@@ -41,7 +48,7 @@ const uploadMultiple = multer({
     fileFilter: (req, file, cb) => {
         checkFileType(file, cb);
     }
-}).array("image", 5); // name of input file
+}).array("images", 5); // name of input file
 
 
 module.exports = { uploudSingle, uploadMultiple };
