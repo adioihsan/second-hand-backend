@@ -48,13 +48,12 @@ module.exports = {
             if (page < 1) {
                 return response(res, 400, false, 'Page must be integer greater than 0', null)
             }
-            const limit = 2
+            const limit = 12
             const offset = (parseInt(page) - 1) * limit
             var query = {} 
             if (category_id) {
                 query = {
                     where: {
-                        // : Apabila menggunakan menggunakan DB Postgres harus menggunakan iLike, Like untuk MySQL
                         [Op.or]: [
                             { name: { [Op.iLike]: `%${search}%` } },
                             { description: { [Op.iLike]: `%${search}%` } }
@@ -65,28 +64,30 @@ module.exports = {
                     attributes: ['id', 'name', 'price', 'description', 'images_url'],
                     limit: limit,
                     offset: offset,
+                    distinct: true,
                     include: [
-                        { model:image, attributes: ['id', 'url'], limit: 1 },
                         { model: category, attributes: ['id', 'name'] , through: { attributes: [] },  where: { id: category_id } },
                     ]
                 }
             } else {
                 query = {
-                    where: {
-                        [Op.or]: [
-                            // : Apabila menggunakan menggunakan DB Postgres harus menggunakan iLike, Like untuk MySQL
-                            { name: { [Op.iLike]: `%${search}%` } },
-                            { description: { [Op.iLike]: `%${search}%` } }
-                        ],
-                        status: true,
-                        is_release: true,
-                    },
                     attributes: ['id', 'name', 'price', 'description', 'images_url'],
                     limit: limit,
                     offset: offset,
+                    distinct: true,
                     include: [
                         { model: category, attributes: ['id', 'name'] , through: { attributes: [] } }
-                    ]
+                    ],
+                    where: {
+                        [Op.or]: [
+                            { name: { [Op.iLike]: `%${search}%` } },
+                            { description: { [Op.iLike]: `%${search}%` } }
+                        ],
+                        [Op.and]: [
+                            { status: true },
+                            { is_release: true }
+                        ]
+                    },
                 }
             }
             const productData = await product.findAndCountAll(query)
