@@ -36,7 +36,6 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     generateToken = (name, image) => {
-      console.log(name, image);
       const token = jwt.sign({
         id: this.id,
         email: this.email,

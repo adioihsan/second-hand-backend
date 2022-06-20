@@ -25,6 +25,10 @@ module.exports = {
           key: 'id'
         }
       },
+      images_url: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
       is_release: {
         type: Sequelize.BOOLEAN,
         allowNull: false,

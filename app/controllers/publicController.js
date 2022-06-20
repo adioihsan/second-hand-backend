@@ -25,7 +25,6 @@ module.exports = {
                 where: { id: id },
                 include: [
                     { model: user, attributes: ['id', 'email'] },
-                    { model: image, attributes: ['id','url'] },
                     { model: category, attributes: ['id', 'name'] , through: { attributes: [] } }
                 ],
             })
@@ -49,7 +48,7 @@ module.exports = {
             if (page < 1) {
                 return response(res, 400, false, 'Page must be integer greater than 0', null)
             }
-            const limit = 12
+            const limit = 2
             const offset = (parseInt(page) - 1) * limit
             var query = {} 
             if (category_id) {
@@ -63,7 +62,7 @@ module.exports = {
                         status: true,
                         is_release: true,
                     },
-                    attributes: ['id', 'name', 'price', 'description', 'createdAt'],
+                    attributes: ['id', 'name', 'price', 'description', 'images_url'],
                     limit: limit,
                     offset: offset,
                     include: [
@@ -82,12 +81,11 @@ module.exports = {
                         status: true,
                         is_release: true,
                     },
-                    attributes: ['id', 'name', 'price', 'description'],
+                    attributes: ['id', 'name', 'price', 'description', 'images_url'],
                     limit: limit,
                     offset: offset,
                     include: [
-                        { model: category, attributes: ['id', 'name'] , through: { attributes: [] } },
-                        { model: image, attributes: ['id','url'], limit:1  }
+                        { model: category, attributes: ['id', 'name'] , through: { attributes: [] } }
                     ]
                 }
             }
