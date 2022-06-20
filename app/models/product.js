@@ -40,6 +40,10 @@ module.exports = (sequelize, DataTypes) => {
         min: 1
       }
     },
+    images_url: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     is_release: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

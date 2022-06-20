@@ -25,7 +25,7 @@ module.exports = {
           key: 'id'
         }
       },
-      images: {
+      images_url: {
         type: Sequelize.STRING,
         allowNull: true
       },
