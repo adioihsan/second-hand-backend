@@ -1,9 +1,7 @@
-const { user, user_detail, product, product_to_category, image, category, sequelize } = require("../models");
+const { user, user_detail, product, product_to_category, image, category } = require("../models");
 const response = require("../../utils/formatResponse"); 
 const fs = require("fs");
 const { Op } = require('Sequelize');
-const path = require('path');
-const { dirname } = require("path");
 
 module.exports = {
     putUserDetail: async (req, res) => {
@@ -73,14 +71,16 @@ module.exports = {
                 where: { id: { [Op.in]: categories } } 
             });
             if (categoryData.length !== categories.length) { return response(res, 400, false, 'Category not found', null) }
-            
+            const productUserUser = await product.findAll({  where: {  user_id: jwtData.id, status: true } });
+            if (productUserUser.length >= 4) { return response(res, 400, false, 'You can only create 4 products', null) }
+            if (categories.length > 5) { return response(res, 400, false, 'You can only add 5 categories', null) }
+
             const productData = await product.create({
                 name: name, 
                 price: price,
                 description: description,
                 user_id: jwtData.id
             });
-
             temp_product_id = productData.id
             // Insert Product to Category
             let data = categories.map(category => {
@@ -118,7 +118,6 @@ module.exports = {
             }
         }
     },  
-    putProduct: async (req, res) => {},
     deleteProduct: async (req, res) => {
         try {
             const jwtData = req.user;
@@ -144,6 +143,80 @@ module.exports = {
                 return response(res, 200, true, 'Product Deleted!', deletedProduct)
             }
             return response(res, 400, false, 'Delete failed!', null)
+        } catch (error) {
+            console.log(error);
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null);
+            }
+            return response(res, 500, false, "Internal Server Error", null);
+        }
+    },
+    patchProductRelease: async (req, res) => {
+        try {
+            const jwtData = req.user;
+            const id = req.params.id;
+            const { is_release } = req.body;
+            // is is_release boolean
+            var regex = /^(true|false)$/;
+            if (!regex.test(is_release)) { return response(res, 400, false, 'is_release must be boolean (true/false)', null) }
+            const productData = await product.findOne({
+                where: { id: id },
+                include: [
+                    { model: image, attributes: ['id', 'url'] },
+                ]
+            })
+            if (!productData) { return response(res, 404, false, 'Product not found', null) }
+            else if (productData.user_id !== jwtData.id) { return response(res, 403, false, 'You are not authorized to delete this product', null) }
+            const updatedProduct = await productData.update({
+                is_release: is_release
+            });
+            if (updatedProduct) {
+                return response(res, 200, true, 'Product Released!', updatedProduct)
+            }
+            return response(res, 400, false, 'Release failed!', null)
+        } catch (error) {
+            console.log(error);
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null);
+            }
+            return response(res, 500, false, "Internal Server Error", null);
+        }
+    },
+    patchProductSold: async (req, res) => {
+        try {
+            const jwtData = req.user;
+            const id = req.params.id;
+            const { status } = req.body;
+            // is status boolean
+            var regex = /^(true|false)$/;
+            if (!regex.test(status)) { return response(res, 400, false, 'is_sold must be boolean (true/false)', null) }
+            // const allProductData = await product.findAll({ where: { user_id : jwtData.id, status: true, is_release: true } }) 
+
+            const productData = await product.findOne({
+                where: { id: id },
+                include: [ { model: image, attributes: ['id', 'url'] }, ]
+            })
+            if (!productData) { return response(res, 404, false, 'Product not found', null) }
+            else if (productData.user_id !== jwtData.id) { return response(res, 403, false, 'You are not authorized to delete this product', null) }
+            const updatedProduct = await productData.update({
+                status: status
+            });
+            if (updatedProduct) {
+                return response(res, 200, true, 'Product Sold!', updatedProduct)
+            }
+            return response(res, 400, false, 'Sold failed!', null)
+        } catch (error) {
+            console.log(error);
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null);
+            }
+            return response(res, 500, false, "Internal Server Error", null);
+        }
+    },
+    // TODO : Belum selesai
+    putProduct: async (req, res) => {
+        try {
+            
         } catch (error) {
             console.log(error);
             if (error.name === 'SequelizeDatabaseError') {

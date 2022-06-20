@@ -49,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
     status: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: false // false: not available, true: available
+      defaultValue: true // false: not available, true: available
     }
   }, {
     sequelize,
