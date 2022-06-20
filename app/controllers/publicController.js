@@ -1,5 +1,6 @@
-const { category } = require("../models");
+const { user, user_detail, product, product_to_category, image, category, sequelize } = require("../models");
 const response = require("../../utils/formatResponse"); 
+const { Op } = require('Sequelize');
 
 module.exports = {
     getCategories: async (req, res) => {
@@ -38,6 +39,7 @@ module.exports = {
             return response(res, 500, false, "Internal Server Error", null);
         }
     },
+    // TODO : Masih ada bug di count
     getProducts: async (req, res) => {
         try {
             const category_id = req.query.category_id
@@ -58,6 +60,8 @@ module.exports = {
                             { name: { [Op.iLike]: `%${search}%` } },
                             { description: { [Op.iLike]: `%${search}%` } }
                         ],
+                        status: true,
+                        is_release: true,
                     },
                     attributes: ['id', 'name', 'price', 'description', 'createdAt'],
                     limit: limit,
@@ -75,6 +79,8 @@ module.exports = {
                             { name: { [Op.iLike]: `%${search}%` } },
                             { description: { [Op.iLike]: `%${search}%` } }
                         ],
+                        status: true,
+                        is_release: true,
                     },
                     attributes: ['id', 'name', 'price', 'description'],
                     limit: limit,
@@ -86,6 +92,7 @@ module.exports = {
                 }
             }
             const productData = await product.findAndCountAll(query)
+            console.log(productData);
             productData.totalPage = Math.ceil(productData.count / limit)
             productData.page = parseInt(page)
             productData.nextPage = page < productData.totalPage ? parseInt(page) + 1 : null
