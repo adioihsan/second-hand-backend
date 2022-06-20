@@ -49,7 +49,7 @@ router.post('/product', auth, privateController.postProduct)
 router.delete('/product/:id', auth, privateController.deleteProduct) 
 router.patch('/product/:id/release', auth, privateController.patchProductRelease)
 router.patch('/product/:id/sold', auth, privateController.patchProductSold)
-router.put('/product/:id', auth, privateController.putProduct) // TODO: update product dan upload multiple image, kalau bisa dihapus image yang diganti
+router.put('/product/:id', auth, privateController.putProduct) 
 
 // router.post("/wish", auth, privateController.postProductWishlist);           // TODO: Menambahkan wish berdasarkan user yang login dan product yang diinginkan (id product), jika sudah ada maka tidak ditambahkan, jika belum ada maka ditambahkan, dan jika product yang diinginkan tidak ada maka tidak ditambahkan atau status product false (not available)
 // router.get("/wish/:id", auth, privateController.getProductWishlist);         // TODO: Mengambil wishlist berdasarkan id wishlist, authorized by user yang login, data include product dan user

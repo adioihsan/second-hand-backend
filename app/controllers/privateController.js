@@ -155,24 +155,18 @@ module.exports = {
             }
         }
     },  
-    // TODO : Perbaiki image Delete
     deleteProduct: async (req, res) => {
         try {
             const jwtData = req.user;
             const id = req.params.id;
             const productData = await product.findOne({
-                where: { id: id },
-                include: [
-                    { model: image, attributes: ['id', 'url'] },
-                ]
+                where: { id: id }
             });
             if (!productData) { return response(res, 404, false, 'Product not found', null) }
             else if (productData.user_id !== jwtData.id) { 
                 return response(res, 403, false, 'You are not authorized to delete this product', null) 
             }
-            const deletedProduct = await product.destroy({
-                where: { id: id }
-            });
+            const deletedProduct = await productData.destroy();
             if (deletedProduct) {
                 productData.images.map(image => {
                      fs.unlink("public/images/" + image.url, (err) => {
@@ -227,7 +221,6 @@ module.exports = {
             var regex = /^(true|false)$/;
             if (!regex.test(status)) { return response(res, 400, false, 'is_sold must be boolean (true/false)', null) }
             // const allProductData = await product.findAll({ where: { user_id : jwtData.id, status: true, is_release: true } }) 
-
             const productData = await product.findOne({
                 where: { id: id },
             })
@@ -248,31 +241,47 @@ module.exports = {
             return response(res, 500, false, "Internal Server Error", null);
         }
     },
-    // TODO : Belum Jadi
     putProduct: async (req, res) => {
         try {
             const jwtData = req.user;
             const id = req.params.id;
             const { name, price, description, images_url } = req.body;
             const productData = await product.findOne({
-                where: { id: id }
-            });
+                where: { id: id },
+                include: { model: category, attributes: ['id', 'name'] , through: { attributes: [] } } 
+            })
             if (!productData) { return response(res, 404, false, 'Product not found', null) }
             else if (productData.user_id !== jwtData.id) { return response(res, 403, false, 'You are not authorized to update this product', null) }
+            
+            const deleteProductCategory = await product_to_category.destroy({ where: { product_id: id } })
             const categories = (typeof req.body.categories === 'string') ? [req.body.categories] : req.body.categories
-            const categoryData = await category.findAll({
-                where: { id: { [Op.in]: categories } }
-            });
-
-            if (categoryData.length !== categories.length) { return response(res, 400, false, 'Category not found', null) }
+            if(categories) {
+                const categoryData = await category.findAll({
+                    where: { id: { [Op.in]: categories } }
+                });
+                const data = categories.map(category => {
+                    return { product_id: id, category_id: category }
+                })
+                if (categoryData.length !== categories.length) { return response(res, 400, false, 'Category not found', null) }
+                // return response(res, 200, true, 'Success', productData);
+                const productToCategoryData = await product_to_category.bulkCreate(data)
+                if (!productToCategoryData ) {
+                    return response(res, 400, false, 'Has failed to create product to category', null)
+                }
+            }
             const updatedProduct = await productData.update({
                 name: name,
                 price: price,
                 description: description,
                 images_url: images_url
-            });
+            })
+            const responseData = await product.findOne({ where: { id: id },
+                include: [
+                    { model: category, attributes: ['id', 'name'] , through: { attributes: ['id'] } }
+                ]
+            })
             if (updatedProduct) {
-                return response(res, 200, true, 'Product Updated!', updatedProduct)
+                return response(res, 200, true, 'Product Updated!', responseData)
             }
             return response(res, 400, false, 'Update failed!', null)
         } catch (error) {

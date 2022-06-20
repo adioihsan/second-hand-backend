@@ -8,11 +8,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env: 
-      PROD_DB_USERNAME: ${{ secrets.PROD.DB_USERNAME }}
-      PROD_DB_PASSWORD: ${{ secrets.PROD.DB_PASSWORD }}
-      PROD_DB_NAME: ${{ secrets.PROD.DB_NAME }}
-      PROD_DB_HOSTNAME: ${{ secrets.PROD.DB_HOSTNAME }}
-      PROD_DB_PORT: ${{ secrets.PROD.DB_PORT }}
+      PROD_DB_USERNAME: ${{ secrets.PROD_DB_USERNAME }}
+      PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
+      PROD_DB_NAME: ${{ secrets.PROD_DB_NAME }}
+      PROD_DB_HOSTNAME: ${{ secrets.PROD_DB_HOSTNAME }}
+      PROD_DB_PORT: ${{ secrets.PROD_DB_PORT }}
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
