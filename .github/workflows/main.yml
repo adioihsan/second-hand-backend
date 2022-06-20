@@ -11,7 +11,7 @@ jobs:
       PROD_DB_USERNAME: ${{ secrets.PROD_DB_USERNAME }}
       PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
       PROD_DB_NAME: ${{ secrets.PROD_DB_NAME }}
-      PROD_DB_HOSTNAME: ${{ secrets.PROD_DB_HOSTNAME }}
+      PROD_DB_HOST: ${{ secrets.PROD_DB_HOST }}
       PROD_DB_PORT: ${{ secrets.PROD_DB_PORT }}
     steps:
       - uses: actions/checkout@v2
@@ -27,8 +27,6 @@ jobs:
         run: npx sequelize db:migrate --env production
       # - name: Seeding DB
       #   run: npx sequelize db:seed:all --env production
-      # - name: Test
-      #   run: npm test
 
   deploy:
     runs-on: ubuntu-latest

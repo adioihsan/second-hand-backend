@@ -38,7 +38,6 @@ module.exports = {
             return response(res, 500, false, "Internal Server Error", null);
         }
     },
-    // TODO : Masih ada bug di count
     getProducts: async (req, res) => {
         try {
             const category_id = req.query.category_id
@@ -91,7 +90,6 @@ module.exports = {
                 }
             }
             const productData = await product.findAndCountAll(query)
-            console.log(productData);
             productData.totalPage = Math.ceil(productData.count / limit)
             productData.page = parseInt(page)
             productData.nextPage = page < productData.totalPage ? parseInt(page) + 1 : null
