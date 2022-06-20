@@ -1,18 +1,18 @@
-name: Main
+name: Test
 on:
   push:
-    branches: [ main ]
+    branches: [ develope ]
   workflow_dispatch:
 jobs:
 
   build:
     runs-on: ubuntu-latest
     env: 
-      PROD_DB_USERNAME: ${{ secrets.PROD.DB_USERNAME }}
-      PROD_DB_PASSWORD: ${{ secrets.PROD.DB_PASSWORD }}
-      PROD_DB_NAME: ${{ secrets.PROD.DB_NAME }}
-      PROD_DB_HOSTNAME: ${{ secrets.PROD.DB_HOSTNAME }}
-      PROD_DB_PORT: ${{ secrets.PROD.DB_PORT }}
+      TEST_DB_USERNAME: ${{ secrets.TEST.DB_USERNAME }}
+      TEST_DB_PASSWORD: ${{ secrets.TEST.DB_PASSWORD }}
+      TEST_DB_NAME: ${{ secrets.TEST.DB_NAME }}
+      TEST_DB_HOSTNAME: ${{ secrets.TEST.DB_HOSTNAME }}
+      TEST_DB_PORT: ${{ secrets.TEST.DB_PORT }}
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
@@ -24,9 +24,8 @@ jobs:
       - name: Install sequlize-cli
         run: npm install sequelize-cli
       - name: Migrate DB
-        run: npx sequelize db:migrate --env production
-      # - name: Seeding DB
-      #   run: npx sequelize db:seed:all --env production
+        run: npx sequelize db:migrate --env test_production
+      #   run: npx sequelize db:seed:all --env test_production
       # - name: Test
       #   run: npm test
 
@@ -34,11 +33,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build]
     env: 
-      ENV_VARIABLE: PROD
+      ENV_VARIABLE: TEST
     steps:
       - uses: actions/checkout@v2
       - uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "secondhand-be"
+          heroku_app_name: "secondhand-be-test"
           heroku_email: ${{secrets.HEROKU_EMAIL}}
