@@ -4,7 +4,6 @@ const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class product extends Model {
     static associate(models) {
-      this.hasMany(models.image, {foreignKey: 'product_id'})
       this.hasMany(models.wishlist, {foreignKey: 'product_id'})
       this.hasMany(models.negotiation, {foreignKey: 'product_id'})
       this.belongsTo(models.user, {foreignKey: 'user_id'})
@@ -40,6 +39,10 @@ module.exports = (sequelize, DataTypes) => {
         isInt: { msg: 'User id must be integer' },
         min: 1
       }
+    },
+    images_url: {
+      type: DataTypes.STRING,
+      allowNull: true
     },
     is_release: {
       type: DataTypes.BOOLEAN,
