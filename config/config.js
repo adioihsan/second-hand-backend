@@ -20,7 +20,7 @@ module.exports = {
       database: process.env.PROD_DB_NAME,
       host: process.env.PROD_DB_HOST,
       port: parseInt(process.env.PROD_DB_PORT),
-      url: `postgres://${process.env.PROD_DB_USERNAME}:${process.env.PROD_DB_PASSWORD}@${process.env.PROD_DB_HOSTNAME}:${process.env.PROD_DB_PORT}/${process.env.PROD_DB_NAME}`,
+      url: `postgres://${process.env.PROD_DB_USERNAME}:${process.env.PROD_DB_PASSWORD}@${process.env.PROD_DB_HOST}:${process.env.PROD_DB_PORT}/${process.env.PROD_DB_NAME}`,
       dialect: "postgres",
       dialectOptions: {
         ssl: { 
@@ -35,7 +35,7 @@ module.exports = {
       database: process.env.TEST_DB_NAME,
       host: process.env.TEST_DB_HOST,
       port: parseInt(process.env.TEST_DB_PORT),
-      url: `postgres://${process.env.TEST_DB_USERNAME}:${process.env.TEST_DB_PASSWORD}@${process.env.TEST_DB_HOSTNAME}:${process.env.TEST_DB_PORT}/${process.env.TEST_DB_NAME}`,
+      url: `postgres://${process.env.TEST_DB_USERNAME}:${process.env.TEST_DB_PASSWORD}@${process.env.TEST_DB_HOST}:${process.env.TEST_DB_PORT}/${process.env.TEST_DB_NAME}`,
       dialect: "postgres",
       dialectOptions: {
         ssl: {

@@ -1,6 +1,6 @@
 const { user, user_detail, product, product_to_category, image, category, sequelize } = require("../models");
 const response = require("../../utils/formatResponse"); 
-const { Op } = require('Sequelize');
+const { Op } = require('sequelize');
 
 module.exports = {
     getCategories: async (req, res) => {
