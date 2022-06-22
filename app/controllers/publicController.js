@@ -22,7 +22,10 @@ module.exports = {
         try {
             const id = req.params.id;
             const productData = await product.findOne({ 
-                where: { id: id },
+                where: { 
+                    id: id,
+                    is_release: true 
+                },
                 include: [
                     { model: user, attributes: ['id', 'email'] },
                     { model: category, attributes: ['id', 'name'] , through: { attributes: [] } }
@@ -47,7 +50,7 @@ module.exports = {
             if (page < 1) {
                 return response(res, 400, false, 'Page must be integer greater than 0', null)
             }
-            const limit = 12
+            const limit = parseInt(req.query.limit) || 12
             const offset = (parseInt(page) - 1) * limit
             var query = {} 
             if (category_id) {
@@ -90,6 +93,7 @@ module.exports = {
                 }
             }
             const productData = await product.findAndCountAll(query)
+            productData.limit = limit
             productData.totalPage = Math.ceil(productData.count / limit)
             productData.page = parseInt(page)
             productData.nextPage = page < productData.totalPage ? parseInt(page) + 1 : null

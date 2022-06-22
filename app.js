@@ -8,7 +8,6 @@ var dotenv = require('dotenv').config();
 const multer = require('multer')()
 const response = require('./utils/formatResponse')
 const indexRouter = require('./routes/index')
-const express = require('express');
 
 const cors = require('cors');
 app.use(cors());

@@ -46,6 +46,7 @@ router.post('/image', auth, uploudSingle, privateController.postImage)
 router.delete('/image/:name', auth, privateController.deleteImage)
 
 router.post('/product', auth, privateController.postProduct)   
+router.get('/product/me', auth, privateController.getProduct)
 router.delete('/product/:id', auth, privateController.deleteProduct) 
 router.patch('/product/:id/release', auth, privateController.patchProductRelease)
 router.patch('/product/:id/sold', auth, privateController.patchProductSold)
@@ -56,7 +57,8 @@ router.put('/product/:id', auth, privateController.putProduct)
 // router.delete("/wish/:id", auth, privateController.deleteProductWishlist);   // TODO: Menghapus wishlist berdasarkan id wishlist, authorized by user yang login
 /// router.get("/wishes", auth, privateController.getProductWishlistAll);        // TODO: Mengambil semua wishlist berdasarkan user yang login, authorized by user yang login
 
-// router.post("/negotiation", auth, privateController.postNegotiation);    
+/* Negotiate API */
+router.post("/negotiation", auth, privateController.postNegotiation);    
 // router.get("/negotiation", auth, privateController.getNegotiation);
 // router.delete("/negotiation/:id", auth, privateController.deleteNegotiation);
 // router.put("/negotiation/:id", auth, privateController.putNegotiation);
