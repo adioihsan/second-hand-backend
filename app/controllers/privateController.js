@@ -1,4 +1,4 @@
-const { user, user_detail, product, product_to_category, image, category } = require("../models");
+const { user, user_detail, product, product_to_category, image, category, wishlist } = require("../models");
 const response = require("../../utils/formatResponse"); 
 const fs = require("fs");
 const { Op } = require('sequelize');
@@ -284,6 +284,75 @@ module.exports = {
                 return response(res, 200, true, 'Product Updated!', responseData)
             }
             return response(res, 400, false, 'Update failed!', null)
+        } catch (error) {
+            console.log(error);
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null);
+            }
+            return response(res, 500, false, "Internal Server Error", null);
+        }
+    },
+    //masih belum
+    postProductWishlist: async (req, res) => {
+        try {
+            const { product_id, user_id } = req.body;
+            // const wish = await wishlist.findOne({ 
+            //     where: { product_id: product_id }
+            // })
+            // // if (wish == id) { return response(res, 400, false, 'Already', wish) }
+            // if (wish != product_id) { return response(res, 400, false, 'Wish Not Found', wish) }
+            const list = await wishlist.create({ 
+                product_id: product_id,
+                user_id: user_id     
+            });
+
+            // if (list == product_id) { return response(res, 400, false, 'Already', list) }
+            // if (list != wish) { return response(res, 400, false, 'Wish Not Found', list) }
+            if (!list) { return response(res, 404, false, 'yes', list) }
+            return response(res, 200, true, 'Success', list);
+        } catch (error) {
+            console.log(error);
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null);
+            }
+            return response(res, 500, false, "Internal Server Error", null);
+        }
+    },
+    getProductWishlist: async (req, res) => { 
+        try {
+            const wish = await wishlist.findOne({ 
+                where: { id: req.params.id }
+            });
+            if (!wish) { return response(res, 404, false, 'Wish List not found', wish) }
+            return response(res, 200, true, 'Success', wish);
+        } catch (error) {
+            console.log(error);
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null);
+            }
+            return response(res, 500, false, "Internal Server Error", null);
+        }
+    },
+    deleteProductWishlist: async (req, res) => {
+        try {
+            const wish = await wishlist.destroy({ 
+                where: { id: req.params.id }
+            });
+            if (!wish) { return response(res, 404, false, 'Wish List not found', wish) }
+            return response(res, 200, true, 'Success', wish);
+        } catch (error) {
+            console.log(error);
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null);
+            }
+            return response(res, 500, false, "Internal Server Error", null);
+        }
+    },  
+    getProductWishlistAll: async (req, res) => {
+        try {
+            const list = await wishlist.findAll();
+            if (!list) { return response(res, 404, false, 'Wish list Detail not found', list) }
+            return response(res, 200, true, 'Success', list);
         } catch (error) {
             console.log(error);
             if (error.name === 'SequelizeDatabaseError') {
