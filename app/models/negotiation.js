@@ -4,7 +4,7 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class negotiation extends Model {
     static associate(models) {
-      this.belongsTo(models.user, {foreignKey: 'user_id'})
+      this.belongsTo(models.user, {foreignKey: 'user_id_buyer'})
     }
   }
   negotiation.init({
