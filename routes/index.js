@@ -46,7 +46,7 @@ router.post('/image', auth, uploudSingle, privateController.postImage)
 router.delete('/image/:name', auth, privateController.deleteImage)
 
 router.post('/product', auth, privateController.postProduct)   
-router.get('/product/me', auth, privateController.getProduct)
+// router.get('/product/me', auth, privateController.getProduct)
 router.delete('/product/:id', auth, privateController.deleteProduct) 
 router.patch('/product/:id/release', auth, privateController.patchProductRelease)
 router.patch('/product/:id/sold', auth, privateController.patchProductSold)

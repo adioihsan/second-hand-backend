@@ -299,20 +299,25 @@ module.exports = {
             const jwtData = req.user
             const { product_id, price } = req.body
 
+            const userDetailData = await user_detail.findOne({ where: { user_id: jwtData.id} })
+            console.log(userDetailData)
+
+            if (!userDetailData.name || !userDetailData.address || !userDetailData.phone) {
+                return response(res, 400, false, 'Please complete your profile first.', null)
+            }
             const productData = await product.findOne({
                 where: { 
                     id: product_id,
                     status: true,
                     is_release: true,
-                    user_id: {
-                        [Op.not]: jwtData.id
-                    }
+                    user_id: { [Op.not]: jwtData.id }
                 }
-            })
-            console.log(productData)
+            }) 
             if(!productData) { 
                 return response(res, 404, false, "Product not found!", null)
-            }   
+            } else if(productData.status === false) {
+                return response(res, 404, false, "Product not available!", null)
+            }
 
             const dataInput = {
                 user_id_buyer: jwtData.id,
@@ -320,9 +325,12 @@ module.exports = {
                 price: price,
                 status: 1
             }
-            console.log(dataInput);
-            const negotiationData = await negotiation.create(dataInput)
+            console.log(dataInput)
+            const negotiationData =  await negotiation.create(dataInput)
 
+            if(!negotiationData) {
+                return response(res, 400, false, "Failed to create negotiationData", null)
+            }
             return response(res, 200, true, "Success", negotiationData)
 
         } catch (error) {
