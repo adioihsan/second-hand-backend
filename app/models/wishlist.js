@@ -9,8 +9,24 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   wishlist.init({
-    product_id: DataTypes.INTEGER,
-    user_id: DataTypes.INTEGER
+    product_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'Product ID is required'
+        }
+      }
+    },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'User ID is required'
+        }
+      }
+    }
   }, {
     sequelize,
     tableName: 'wishlists',
