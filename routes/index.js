@@ -46,16 +46,18 @@ router.post('/image', auth, uploudSingle, privateController.postImage)
 router.delete('/image/:name', auth, privateController.deleteImage)
 
 router.post('/product', auth, privateController.postProduct)   
+router.get('/product/:id/me', auth, privateController.getProduct)
 router.delete('/product/:id', auth, privateController.deleteProduct) 
 router.patch('/product/:id/release', auth, privateController.patchProductRelease)
 router.patch('/product/:id/sold', auth, privateController.patchProductSold)
-router.put('/product/:id', auth, privateController.putProduct) // TODO: update product dan upload multiple image, kalau bisa dihapus image yang diganti
+router.put('/product/:id', auth, privateController.putProduct) 
 
-router.post("/wish", auth, privateController.postProductWishlist);           // TODO: Menambahkan wish berdasarkan user yang login dan product yang diinginkan (id product), jika sudah ada maka tidak ditambahkan, jika belum ada maka ditambahkan, dan jika product yang diinginkan tidak ada maka tidak ditambahkan atau status product false (not available)
-router.get("/wish/:id", auth, privateController.getProductWishlist);         // TODO: Mengambil wishlist berdasarkan id wishlist, authorized by user yang login, data include product dan user
-router.delete("/wish/:id", auth, privateController.deleteProductWishlist);   // TODO: Menghapus wishlist berdasarkan id wishlist, authorized by user yang login
-router.get("/wishes", auth, privateController.getProductWishlistAll);        // TODO: Mengambil semua wishlist berdasarkan user yang login, authorized by user yang login
+router.post("/wish", auth, privateController.postProductWishlist);           
+router.get("/wish/:id", auth, privateController.getProductWishlist);         
+router.delete("/wish/:id", auth, privateController.deleteProductWishlist);   
+router.get("/wishes", auth, privateController.getProductWishlistAll);        
 
+/* Negotiate API */
 // router.post("/negotiation", auth, privateController.postNegotiation);    
 // router.get("/negotiation", auth, privateController.getNegotiation);
 // router.delete("/negotiation/:id", auth, privateController.deleteNegotiation);

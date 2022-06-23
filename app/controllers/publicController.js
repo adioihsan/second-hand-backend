@@ -1,6 +1,6 @@
 const { user, user_detail, product, product_to_category, image, category, sequelize } = require("../models");
 const response = require("../../utils/formatResponse"); 
-const { Op } = require('Sequelize');
+const { Op } = require('sequelize');
 
 module.exports = {
     getCategories: async (req, res) => {
@@ -22,7 +22,10 @@ module.exports = {
         try {
             const id = req.params.id;
             const productData = await product.findOne({ 
-                where: { id: id },
+                where: { 
+                    id: id,
+                    is_release: true
+                },
                 include: [
                     { model: user, attributes: ['id', 'email'] },
                     { model: category, attributes: ['id', 'name'] , through: { attributes: [] } }
@@ -38,7 +41,6 @@ module.exports = {
             return response(res, 500, false, "Internal Server Error", null);
         }
     },
-    // TODO : Masih ada bug di count
     getProducts: async (req, res) => {
         try {
             const category_id = req.query.category_id
@@ -48,13 +50,12 @@ module.exports = {
             if (page < 1) {
                 return response(res, 400, false, 'Page must be integer greater than 0', null)
             }
-            const limit = 2
+            const limit = parseInt(req.query.limit) || 12
             const offset = (parseInt(page) - 1) * limit
             var query = {} 
             if (category_id) {
                 query = {
                     where: {
-                        // : Apabila menggunakan menggunakan DB Postgres harus menggunakan iLike, Like untuk MySQL
                         [Op.or]: [
                             { name: { [Op.iLike]: `%${search}%` } },
                             { description: { [Op.iLike]: `%${search}%` } }
@@ -65,32 +66,34 @@ module.exports = {
                     attributes: ['id', 'name', 'price', 'description', 'images_url'],
                     limit: limit,
                     offset: offset,
+                    distinct: true,
                     include: [
-                        { model:image, attributes: ['id', 'url'], limit: 1 },
                         { model: category, attributes: ['id', 'name'] , through: { attributes: [] },  where: { id: category_id } },
                     ]
                 }
             } else {
                 query = {
+                    attributes: ['id', 'name', 'price', 'description', 'images_url', 'user_id'],
+                    limit: limit,
+                    offset: offset,
+                    distinct: true,
+                    include: [
+                        { model: category, attributes: ['id', 'name'] , through: { attributes: [] } }
+                    ],
                     where: {
                         [Op.or]: [
-                            // : Apabila menggunakan menggunakan DB Postgres harus menggunakan iLike, Like untuk MySQL
                             { name: { [Op.iLike]: `%${search}%` } },
                             { description: { [Op.iLike]: `%${search}%` } }
                         ],
-                        status: true,
-                        is_release: true,
+                        [Op.and]: [
+                            { status: true },
+                            { is_release: true }
+                        ]
                     },
-                    attributes: ['id', 'name', 'price', 'description', 'images_url'],
-                    limit: limit,
-                    offset: offset,
-                    include: [
-                        { model: category, attributes: ['id', 'name'] , through: { attributes: [] } }
-                    ]
                 }
             }
             const productData = await product.findAndCountAll(query)
-            console.log(productData);
+            productData.limit = limit
             productData.totalPage = Math.ceil(productData.count / limit)
             productData.page = parseInt(page)
             productData.nextPage = page < productData.totalPage ? parseInt(page) + 1 : null
