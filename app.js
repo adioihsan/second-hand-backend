@@ -8,6 +8,10 @@ var dotenv = require('dotenv').config();
 const multer = require('multer')()
 const response = require('./utils/formatResponse')
 const indexRouter = require('./routes/index');
+const swaggerJSON = require('./swagger.json')
+const swaggerUI = require('swagger-ui-express')
+
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerJSON))
 
 app.use(logger('dev'));
 app.use(express.json());
