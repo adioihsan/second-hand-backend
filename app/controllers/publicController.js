@@ -24,7 +24,7 @@ module.exports = {
             const productData = await product.findOne({ 
                 where: { 
                     id: id,
-                    is_release: true 
+                    is_release: true
                 },
                 include: [
                     { model: user, attributes: ['id', 'email'] },
@@ -73,7 +73,7 @@ module.exports = {
                 }
             } else {
                 query = {
-                    attributes: ['id', 'name', 'price', 'description', 'images_url'],
+                    attributes: ['id', 'name', 'price', 'description', 'images_url', 'user_id'],
                     limit: limit,
                     offset: offset,
                     distinct: true,
