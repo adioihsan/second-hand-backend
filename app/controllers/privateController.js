@@ -481,7 +481,6 @@ module.exports = {
             const { product_id, price } = req.body
 
             const userDetailData = await user_detail.findOne({ where: { user_id: jwtData.id} })
-            console.log(userDetailData)
 
             if (!userDetailData.name || !userDetailData.address || !userDetailData.phone) {
                 return response(res, 400, false, 'Please complete your profile first.', null)
