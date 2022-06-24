@@ -43,7 +43,7 @@ router.put('/user-detail', auth, uploudSingle, privateController.putUserDetail)
 router.get('/user-detail', auth, privateController.getUserDetail)
 
 router.post('/image', auth, uploudSingle, privateController.postImage)
-router.delete('/image/:name', auth, privateController.deleteImage)
+router.delete('/image', auth, privateController.deleteImage)
 
 router.post('/product', auth, privateController.postProduct)   
 router.get('/product/:id/me', auth, privateController.getProduct)
