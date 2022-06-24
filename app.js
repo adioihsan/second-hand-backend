@@ -7,6 +7,8 @@ var app = express();
 var dotenv = require('dotenv').config();
 const multer = require('multer')()
 var indexRouter = require('./routes/index');
+const swaggerJSON = require('./swagger.json');
+const swaggerUI = require('swagger-ui-express');
 
 // view engine setup
 // app.set('views', path.join(__dirname, 'views'));
@@ -17,6 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerJSON));
 
 app.use('/', indexRouter);
 

@@ -13,7 +13,7 @@ module.exports = {
     */ 
     await queryInterface.bulkInsert('categories', [
       {
-      name: 'Hoby',
+      name: 'Hobby',
       created_at: new Date(),
       updated_at: new Date(),
     },
