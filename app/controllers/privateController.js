@@ -82,13 +82,12 @@ module.exports = {
     },
     deleteImage: async (req, res) => {
         try {
+            console.log("Ke route ini");
             const jwtData = req.user; 
             const { url } = req.body
-            const urlArray = url.split("_")
-            console.log(urlArray);
+            const urlArray = url.split("_") 
             const idUserInImage = parseInt(urlArray[0])
             if (idUserInImage !== jwtData.id) { return response(res, 400, false, 'You are not authorized to delete this image', null) }
-
             const imageData = await image.findOne({ where: { url: url } })
             if (!imageData) { return response(res, 404, false, 'Image not found', null) }
             const deletedImage = await imageData.destroy()
