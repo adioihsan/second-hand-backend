@@ -525,6 +525,26 @@ module.exports = {
                 return response(res, 500, false, "Internal Server Error", null);
             }
         }
+    },
+    getProfile: async (req, res) => { 
+        try {
+            const jwtData = req.user;
+            const profile = await user.findOne({ 
+                where: { id: jwtData.id },
+                attributes: ['id', 'email'],
+                include: [
+                    { model: user_detail, attributes: ['name', 'image'] }
+                ],
+            });
+            if (!profile) { return response(res, 404, false, 'User not found', profile) }
+            return response(res, 200, true, 'Success', profile);
+        } catch (error) {
+            console.log(error);
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null);
+            }
+            return response(res, 500, false, "Internal Server Error", null);
+        }
     }
     
 }
