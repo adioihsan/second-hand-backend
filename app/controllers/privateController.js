@@ -3,6 +3,7 @@ const { user, user_detail, product, product_to_category, image, category, wishli
 const response = require("../../utils/formatResponse"); 
 const fs = require("fs");
 const { Op } = require('sequelize');
+const helper = require('../../utils/helpers')
 
 module.exports = {
     /* User Detail */
@@ -371,6 +372,72 @@ module.exports = {
             }
             return response(res, 500, false, "Internal Server Error", null);
         }
+    },
+    getSellerProduct: async (req, res) => {
+        try {
+            // 1. Get Semua 
+            // 2. Get Product Terjual
+            // 3. Get Belum Release
+            // 4. Get Barang yg di whislist
+            const QFilter = req.query.filter || 1
+            const arrayFilter = [1, 2, 3, 4]
+            const filter = helper.slice(arrayFilter, [QFilter])[0]
+            console.log("Data Slicing: ", filter)
+
+            if(!filter){
+                return response(res, 400, false, "Filter tidak tersedia", null)
+            }
+            const page = parseInt(req.query.page) || 1
+            if (page < 1) {
+                return response(res, 400, false, 'Page must be integer greater than 0', null)
+            }
+            const limit = parseInt(req.query.limit) || 12
+            const offset = (parseInt(page) - 1) * limit
+            
+            var whereData = {}
+            if(filter == 2 ){
+                whereData = { user_id: req.user.id, status: false }
+            } else if(filter == 3 ) {
+                whereData = { user_id: req.user.id, is_release: false }
+            } else if(filter == 4 ) {
+                whereData = { user_id: req.user.id, is_release: false }
+                //TODO : Ini harus dibenerin
+                // const productData = await product.findAndCountAll({
+                //     limit: limit,
+                //     offset: offset,
+                //     distinct: true,
+                //     include: {
+                //         model: wishlist, where: {
+                //             [Op.]
+                //         }
+                //     }
+                // }) 
+                // return response(res, 200, false, "Sukses 2", productData)
+            } else {
+                whereData = { user_id: req.user.id }
+            }
+
+            const productData = await product.findAndCountAll({
+                limit: limit,
+                offset: offset,
+                distinct: true,
+                where: whereData
+            }) 
+
+            productData.limit = limit
+            productData.totalPage = Math.ceil(productData.count / limit)
+            productData.page = parseInt(page)
+            productData.nextPage = page < productData.totalPage ? parseInt(page) + 1 : null
+            productData.prevPage = page > 1 ? parseInt(page) - 1 : null
+            return response(res, 200, true, 'Success', productData);
+
+        } catch (error) {
+            console.log(error);
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null);
+            }
+            return response(res, 500, false, "Internal Server Error", null);
+        }   
     },
 
     /* Whistlist API */

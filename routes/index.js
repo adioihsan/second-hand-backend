@@ -46,11 +46,12 @@ router.post('/image', auth, uploudSingle, privateController.postImage)
 router.delete('/image', auth, privateController.deleteImage)
 
 router.post('/product', auth, privateController.postProduct)   
-router.get('/product/:id/me', auth, privateController.getProduct)
 router.delete('/product/:id', auth, privateController.deleteProduct) 
 router.patch('/product/:id/release', auth, privateController.patchProductRelease)
 router.patch('/product/:id/sold', auth, privateController.patchProductSold)
 router.put('/product/:id', auth, privateController.putProduct) 
+router.get('/product/:id/me', auth, privateController.getProduct)
+router.get('/products/me', auth, privateController.getSellerProduct)
 
 router.post("/wish", auth, privateController.postProductWishlist);           
 router.get("/wish/:id", auth, privateController.getProductWishlist);         
