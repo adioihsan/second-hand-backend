@@ -22,17 +22,23 @@ module.exports = {
         try {
             const id = req.params.id;
             const productData = await product.findOne({ 
-                where: { 
-                    id: id,
-                    is_release: true
-                },
+                where: {  id: id, is_release: true },
                 include: [
-                    { model: user, attributes: ['id', 'email'] },
+                    { model: user, attributes: ['id', 'email'], include: { model: user_detail, attributes: ['name','city']} },
                     { model: category, attributes: ['id', 'name'] , through: { attributes: [] } }
                 ],
             })
+            
             if (!productData) { return response(res, 404, false, 'Product not found', null) }
-            return response(res, 200, true, 'Success', productData);
+            const data = productData.toJSON()
+            const userData = {
+                id: productData.id,
+                city: productData.user.user_detail.city,
+                name: productData.user.user_detail.name,
+            }
+            delete data.user
+            data.user = userData
+            return response(res, 200, true, 'Success', data);
         } catch (error) {
             console.log(error);
             if (error.name === 'SequelizeDatabaseError') {

@@ -355,16 +355,27 @@ module.exports = {
                 where: { 
                     id: id,
                 },
-                include: [
-                    { model: user, attributes: ['id', 'email'] },
+                include: [{ 
+                    model: user, attributes: ['id', 'email'], include: { model: user_detail, attributes: ['name', 'city'] }
+                    },
                     { model: category, attributes: ['id', 'name'] , through: { attributes: [] } }
                 ],
             })
             if (!productData) { return response(res, 404, false, 'Product not found', null) }
             else if (!productData.is_release && productData.user_id !== req.user.id) {
                 return response(res, 403, false, 'You are not authorized to see this product', null)
+            } else if( productData.user.id !== req.user.id) {
+                return response(res, 403, false, 'You are not authorized to see this product', null)
             }
-            return response(res, 200, true, 'Success', productData);
+            const data = productData.toJSON()
+            const userData = {
+                id: productData.id,
+                city: productData.user.user_detail.city,
+                name: productData.user.user_detail.name,
+            }
+            delete data.user
+            data.user = userData
+            return response(res, 200, true, 'Success', data);
         } catch (error) {
             console.log(error);
             if (error.name === 'SequelizeDatabaseError') {
