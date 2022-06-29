@@ -15,7 +15,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       description: {
-        type: Sequelize.STRING
+        type: Sequelize.TEXT
       },
       user_id: {
         type: Sequelize.INTEGER,

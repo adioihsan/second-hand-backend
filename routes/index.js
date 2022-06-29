@@ -57,6 +57,8 @@ router.get("/wish/:id", auth, privateController.getProductWishlist);
 router.delete("/wish/:id", auth, privateController.deleteProductWishlist);   
 router.get("/wishes", auth, privateController.getProductWishlistAll);        
 
+router.get("/profile", auth, privateController.getProfile);  
+
 /* Negotiate API */
 // router.post("/negotiation", auth, privateController.postNegotiation);    
 // router.get("/negotiation", auth, privateController.getNegotiation);
