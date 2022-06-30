@@ -1,5 +1,5 @@
-const { user, user_detail, product, product_to_category, image, category, sequelize } = require("../models");
-const response = require("../../utils/formatResponse"); 
+const { user, user_detail, product, product_to_category, image, category, sequelize } = require("../../models");
+const response = require("../../../utils/formatResponse"); 
 const { Op } = require('sequelize');
 
 module.exports = {
@@ -51,7 +51,6 @@ module.exports = {
         try {
             const category_id = req.query.category_id
             const search = req.query.search || ''
-            // Setup Pagination
             const page = parseInt(req.query.page) || 1
             if (page < 1) {
                 return response(res, 400, false, 'Page must be integer greater than 0', null)
