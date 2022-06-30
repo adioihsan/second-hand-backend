@@ -3,11 +3,19 @@ var router = express.Router();
 const response = require('../utils/formatResponse');
 const errorHandleJWT = require('../app/libs/errorHandlePassport');
 
-const auth = require('../app/middlewares/auth');
-const privateController = require("../app/controllers/privateController")
-const publicController = require("../app/controllers/publicController")
-const authController = require('../app/controllers/authController')
+const auth = require('../app/middlewares/auth')
 const { uploudSingle, uploadMultiple } = require('../app/middlewares/multer')
+
+//Controller
+const authPubCon = require('../app/controllers/public/auth');
+const publicController = require("../app/controllers/public/index")
+
+const userPvtCont = require('../app/controllers/private/user')
+const imagePvtCont = require('../app/controllers/private/image')
+const productPvtCont = require('../app/controllers/private/product')
+const whistlistPvtCon = require('../app/controllers/private/whistlist')
+const negotiationPvtCon = require('../app/controllers/private/negotiation')
+
 
 /* API home */
 router.get('/', function(req, res, next) {
@@ -19,10 +27,10 @@ router.get('/', function(req, res, next) {
  * 
  *
  * */
-router.post('/register', authController.postRegister)
-router.post('/login', authController.postLogin)
-router.post("/forgot-password", authController.postForgotPassword)
-router.post("/reset-password", authController.postResetPassword)    
+router.post('/register', authPubCon.postRegister)
+router.post('/login', authPubCon.postLogin)
+router.post("/forgot-password", authPubCon.postForgotPassword)
+router.post("/reset-password", authPubCon.postResetPassword)    
 
 /**
  *  Public API 
@@ -30,7 +38,6 @@ router.post("/reset-password", authController.postResetPassword)
  *  No need to authenticate
  *  */ 
 router.get('/categories', publicController.getCategories)
-
 router.get('/product/:id', publicController.getProduct)         
 router.get('/products', publicController.getProducts)  
 
@@ -39,33 +46,36 @@ router.get('/products', publicController.getProducts)
  * 
  *  Need to be logged in to access this API, Using JWT Token added to Bearer Header
  * */
-router.put('/user-detail', auth, uploudSingle, privateController.putUserDetail)
-router.get('/user-detail', auth, privateController.getUserDetail)
+router.put('/user-detail', auth, uploudSingle, userPvtCont.putUserDetail)
+router.get('/user-detail', auth, userPvtCont.getUserDetail)
+router.get("/profile", auth, userPvtCont.getProfile)
 
-router.post('/image', auth, uploudSingle, privateController.postImage)
-router.delete('/image', auth, privateController.deleteImage)
+router.post('/image', auth, uploudSingle, imagePvtCont.postImage)
+router.delete('/image', auth, imagePvtCont.deleteImage)
 
-router.post('/product', auth, privateController.postProduct)   
-router.delete('/product/:id', auth, privateController.deleteProduct) 
-router.patch('/product/:id/release', auth, privateController.patchProductRelease)
-router.patch('/product/:id/sold', auth, privateController.patchProductSold)
-router.put('/product/:id', auth, privateController.putProduct) 
-router.get('/product/:id/me', auth, privateController.getProduct)
-router.get('/products/me', auth, privateController.getSellerProduct)
+router.post('/product', auth, productPvtCont.postProduct)   
+router.delete('/product/:id', auth, productPvtCont.deleteProduct) 
+router.patch('/product/:id/release', auth, productPvtCont.patchProductRelease)
+router.patch('/product/:id/sold', auth, productPvtCont.patchProductSold)
+router.put('/product/:id', auth, productPvtCont.putProduct) 
+router.get('/product/:id/me', auth, productPvtCont.getProduct)
+router.get('/products/me', auth, productPvtCont.getSellerProduct)
 
-router.post("/wish", auth, privateController.postProductWishlist);           
-router.get("/wish/:id", auth, privateController.getProductWishlist);         
-router.delete("/wish/:id", auth, privateController.deleteProductWishlist);   
-router.get("/wishes", auth, privateController.getProductWishlistAll);        
+router.post("/wish", auth, whistlistPvtCon.postProductWishlist);           
+router.get("/wish/:id", auth, whistlistPvtCon.getProductWishlist);         
+router.delete("/wish/:id", auth, whistlistPvtCon.deleteProductWishlist);   
+router.get("/wishes", auth, whistlistPvtCon.getProductWishlistAll);        
 
-router.get("/profile", auth, privateController.getProfile);  
 
 /* Negotiate API */
-// router.post("/negotiation", auth, privateController.postNegotiation);    
-// router.get("/negotiation", auth, privateController.getNegotiation);
-// router.delete("/negotiation/:id", auth, privateController.deleteNegotiation);
-// router.put("/negotiation/:id", auth, privateController.putNegotiation);
-// router.get("/negotiations", auth, privateController.getNegotiationAll);
+router.post("/negotiation", auth, negotiationPvtCon.postNegotiation)    
+router.get("/negotiation/:id", auth, negotiationPvtCon.getNegotiation)
+router.patch("/negotiation/:id/confirm", auth, negotiationPvtCon.patchSellerConfirmNegotiation)
+router.patch("/negotiation/:id/reject", auth, negotiationPvtCon.patchSellerRejectNegotiation)
+// router.delete("/negotiation/:id", auth, negotiationPvtCon.deleteNegotiation);
+// router.put("/negotiation/:id", auth, negotiationPvtCon.putNegotiation);
+router.get("/negotiations", auth, negotiationPvtCon.getBuyerNegotiations);
+router.get("/negotiations/me", auth, negotiationPvtCon.getSellerNegotiations)
 
 router.use(errorHandleJWT)
 

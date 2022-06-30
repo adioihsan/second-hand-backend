@@ -28,7 +28,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       status: {
-        type: Sequelize.INTEGER, // 0: pending, 1: accepted, 2: rejected 
+        type: Sequelize.INTEGER, // 1: pending, 2: accepted, 3: rejected 
         allowNull: false,
         defaultValue: 0
       },

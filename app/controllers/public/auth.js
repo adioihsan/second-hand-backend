@@ -1,9 +1,9 @@
 /** @format */
 
-const { user, user_detail, otp } = require('../models');
-const response = require('../../utils/formatResponse');
-const emailTransporter = require('../libs/email.js');
-const { emailWelcome, emailForgotPassword } = require('../../utils/emailFormat');
+const { user, user_detail, otp } = require('../../models');
+const response = require('../../../utils/formatResponse');
+const emailTransporter = require('../../libs/email.js');
+const { emailWelcome, emailForgotPassword } = require('../../../utils/emailFormat');
 
 module.exports = {
   // POST /register
