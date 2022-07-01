@@ -4,30 +4,16 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     
     const data = [{
-      name: 'Hoby',
+      title: 'Berhasil Diterbitkan',
       created_at: new Date(),
       updated_at: new Date(),
     }, {
-      name: 'Vehicles',
+      title: 'Penawaran produk',
       created_at: new Date(),
       updated_at: new Date(),
-    }, {
-      name: 'Clothes',
-      created_at: new Date(),
-      updated_at: new Date(),
-    }, {
-      name: 'Electronics',
-      created_at: new Date(),
-      updated_at: new Date(),
-    }, {
-      name: 'Health',
-      created_at: new Date(),
-      updated_at: new Date(),
-    }
-  ]
-
-    await queryInterface.bulkInsert('categories', data)
-
+    }, ]
+    
+    await queryInterface.bulkInsert('notification_categories', data);
   },
 
   async down (queryInterface, Sequelize) {

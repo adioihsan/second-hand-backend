@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   user_detail.init({
     name: DataTypes.STRING,
+    city: DataTypes.STRING,
     address: DataTypes.STRING,
     image: DataTypes.STRING,
     phone: {

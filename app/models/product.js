@@ -4,7 +4,6 @@ const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class product extends Model {
     static associate(models) {
-      this.hasMany(models.image, {foreignKey: 'product_id'})
       this.hasMany(models.wishlist, {foreignKey: 'product_id'})
       this.hasMany(models.negotiation, {foreignKey: 'product_id'})
       this.belongsTo(models.user, {foreignKey: 'user_id'})
@@ -15,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'Name is required'
+        }
+      }
     },
     price: {
       type: DataTypes.INTEGER,
@@ -24,8 +28,22 @@ module.exports = (sequelize, DataTypes) => {
         min: 0
       }
     },
-    description: DataTypes.STRING,
-    user_id: DataTypes.INTEGER,
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        isInt: { msg: 'User id must be integer' },
+        min: 1
+      }
+    },
+    images_url: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     is_release: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
@@ -34,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
     status: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: false // false: not available, true: available
+      defaultValue: true // false: not available, true: available
     }
   }, {
     sequelize,

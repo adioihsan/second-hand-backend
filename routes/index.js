@@ -3,30 +3,79 @@ var router = express.Router();
 const response = require('../utils/formatResponse');
 const errorHandleJWT = require('../app/libs/errorHandlePassport');
 
-const auth = require('../app/middlewares/auth');
-const userController = require("../app/controllers/userController")
-const authController = require('../app/controllers/authController')
+const auth = require('../app/middlewares/auth')
 const { uploudSingle, uploadMultiple } = require('../app/middlewares/multer')
+
+//Controller
+const authPubCon = require('../app/controllers/public/auth');
+const publicController = require("../app/controllers/public/index")
+
+const userPvtCont = require('../app/controllers/private/user')
+const imagePvtCont = require('../app/controllers/private/image')
+const productPvtCont = require('../app/controllers/private/product')
+const whistlistPvtCon = require('../app/controllers/private/whistlist')
+const negotiationPvtCon = require('../app/controllers/private/negotiation')
+
 
 /* API home */
 router.get('/', function(req, res, next) {
   response(res, 200, true, 'Welcome to Second Hand App', null)
 });
 
-/* API Auth */
-router.post('/register', authController.postRegister);
-router.post('/login', authController.postLogin);
-router.post("/forgot-password", authController.postForgotPassword);  // TODO: send email dengan isi otp
-router.post("/reset-password", authController.postResetPassword);    // TODO: reset password dengan mencocokan otp
+/**
+ * Authentication API
+ * 
+ *
+ * */
+router.post('/register', authPubCon.postRegister)
+router.post('/login', authPubCon.postLogin)
+router.post("/forgot-password", authPubCon.postForgotPassword)
+router.post("/reset-password", authPubCon.postResetPassword)    
 
-router.put('/user-detail', auth, uploudSingle, userController.putUserDetail);
-router.get('/user-detail', auth, userController.getUserDetail);
-// router.post('/product', auth, uploadMultiple, userController.postProduct);   // TODO: insert product dan upload multiple image
-// router.put('/product/:id', auth, uploadMultiple, userController.putProduct); // TODO: update product dan upload multiple image, kalau bisa dihapus image yang diganti
-// router.get('/product/:id', auth, userController.getProduct);         // TODO: get product by id
-// router.delete('/product/:id', auth, userController.deleteProduct);   // TODO: delete product by id
-// router.get('/products', auth, userController.getProducts);           // TODO: get all product dengan filter category dan sear
+/**
+ *  Public API 
+ * 
+ *  No need to authenticate
+ *  */ 
+router.get('/categories', publicController.getCategories)
+router.get('/product/:id', publicController.getProduct)         
+router.get('/products', publicController.getProducts)  
 
+/** 
+ *  Private API 
+ * 
+ *  Need to be logged in to access this API, Using JWT Token added to Bearer Header
+ * */
+router.put('/user-detail', auth, uploudSingle, userPvtCont.putUserDetail)
+router.get('/user-detail', auth, userPvtCont.getUserDetail)
+router.get("/profile", auth, userPvtCont.getProfile)
+
+router.post('/image', auth, uploudSingle, imagePvtCont.postImage)
+router.delete('/image', auth, imagePvtCont.deleteImage)
+
+router.post('/product', auth, productPvtCont.postProduct)   
+router.delete('/product/:id', auth, productPvtCont.deleteProduct) 
+router.patch('/product/:id/release', auth, productPvtCont.patchProductRelease)
+router.patch('/product/:id/sold', auth, productPvtCont.patchProductSold)
+router.put('/product/:id', auth, productPvtCont.putProduct) 
+router.get('/product/:id/me', auth, productPvtCont.getProduct)
+router.get('/products/me', auth, productPvtCont.getSellerProduct)
+
+router.post("/wish", auth, whistlistPvtCon.postProductWishlist);           
+router.get("/wish/:id", auth, whistlistPvtCon.getProductWishlist);         
+router.delete("/wish/:id", auth, whistlistPvtCon.deleteProductWishlist);   
+router.get("/wishes", auth, whistlistPvtCon.getProductWishlistAll);        
+
+
+/* Negotiate API */
+router.post("/negotiation", auth, negotiationPvtCon.postNegotiation)    
+router.get("/negotiation/:id", auth, negotiationPvtCon.getNegotiation)
+router.patch("/negotiation/:id/confirm", auth, negotiationPvtCon.patchSellerConfirmNegotiation)
+router.patch("/negotiation/:id/reject", auth, negotiationPvtCon.patchSellerRejectNegotiation)
+// router.delete("/negotiation/:id", auth, negotiationPvtCon.deleteNegotiation);
+// router.put("/negotiation/:id", auth, negotiationPvtCon.putNegotiation);
+router.get("/negotiations", auth, negotiationPvtCon.getBuyerNegotiations);
+router.get("/negotiations/me", auth, negotiationPvtCon.getSellerNegotiations)
 
 router.use(errorHandleJWT)
 

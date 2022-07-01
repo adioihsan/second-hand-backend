@@ -1,48 +1,54 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('negotiations', {
+    await queryInterface.createTable('notifications', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      user_id_buyer: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'users',
-          key: 'id'
-        }
-      },
       product_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
         references: {
           model: 'products',
           key: 'id'
-        }
+        },
+        allowNull: false
+      },
+      category_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'categories',
+          key: 'id'
+        },
+        allowNull: false
+      },
+      nego_price: {
+        type: Sequelize.INTEGER
       },
       price: {
         type: Sequelize.INTEGER
       },
-      status: {
-        type: Sequelize.INTEGER, // 1: pending, 2: accepted, 3: rejected 
-        allowNull: false,
-        defaultValue: 0
+      user_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'id'
+        },
+        allowNull: false
       },
-      created_at: {
+      createdAt: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updated_at: {
+      updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
       }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('negotiations');
+    await queryInterface.dropTable('notifications');
   }
 };

@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       this.hasOne(models.user_detail, {foreignKey: 'user_id'})
       this.hasOne(models.otp, {foreignKey: 'user_id'})
       this.hasMany(models.product, {foreignKey: 'user_id'})
-      this.hasMany(models.negotiation, {foreignKey: 'user_id'})
+      this.hasMany(models.negotiation, {foreignKey: 'user_id_buyer'})
       this.hasMany(models.wishlist, {foreignKey: 'user_id'})
     }
 
@@ -36,7 +36,6 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     generateToken = (name, image) => {
-      console.log(name, image);
       const token = jwt.sign({
         id: this.id,
         email: this.email,

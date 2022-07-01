@@ -15,7 +15,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       description: {
-        type: Sequelize.STRING
+        type: Sequelize.TEXT
       },
       user_id: {
         type: Sequelize.INTEGER,
@@ -24,6 +24,10 @@ module.exports = {
           model: 'users',
           key: 'id'
         }
+      },
+      images_url: {
+        type: Sequelize.STRING,
+        allowNull: true
       },
       is_release: {
         type: Sequelize.BOOLEAN,

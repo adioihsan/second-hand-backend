@@ -1,8 +1,12 @@
-const { user, user_detail } = require("../models");
-const response = require("../../utils/formatResponse"); 
+const { user, user_detail, product, product_to_category, image, category, wishlist, negotiation, notification } = require("../../models");
+const response = require("../../../utils/formatResponse"); 
+const fs = require("fs");
+const { Op } = require('sequelize');
+const helper = require('../../../utils/helpers');
 
 module.exports = {
-    putUserDetail: async (req, res) => {
+     /* User Detail */
+     putUserDetail: async (req, res) => {
         try {
             const jwtData = req.user  // Ngambil Data dari req.body isinya data user, didapat dari passport-JWT
             const { name, city, address, phone } = req.body;
@@ -46,7 +50,6 @@ module.exports = {
     getUserDetail: async (req, res) => { 
         try {
             const jwtData = req.user; // Ngambil Data dari req.body isinya data user, didapat dari passport-JWT
-            // console.log("JWT : ", jwtData); // coba liat data nya
             const userDetail = await user_detail.findOne({ 
                 where: { user_id: jwtData.id }
             });
@@ -60,9 +63,30 @@ module.exports = {
             return response(res, 500, false, "Internal Server Error", null);
         }
     },
-    postProduct: async (req, res) => {},
-    getProduct: async (req, res) => {},
-    putProduct: async (req, res) => {},
-    deleteProduct: async (req, res) => {},
-    getProducts: async (req, res) => {},
+    getProfile: async (req, res) => { 
+        try {
+            const jwtData = req.user;
+            const profileData = await user.findOne({ 
+                where: { id: jwtData.id },
+                attributes: ['id', 'email'],
+                include: [
+                    { model: user_detail, attributes: ['name', 'image'] }
+                ],
+            })
+            if (!profileData) { return response(res, 404, false, 'User not found', null ) }
+
+            return response(res, 200, true, 'Success', {
+                id: profileData.id,
+                email: profileData.email,
+                name: profileData.user_detail.name,
+                photo: profileData.user_detail.image
+            });
+        } catch (error) {
+            console.log(error);
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null);
+            }
+            return response(res, 500, false, "Internal Server Error", null);
+        }
+    },  
 }
