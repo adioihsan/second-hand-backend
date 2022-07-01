@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       validate: {
         isNumeric: { // nah ini namanya validasi bawaan sequelize, kalau isNumeric, maka akan menampilkan error, bawa
-          msg: 'Phone number must be numeric'
+          msg: 'nomor telepon harus berupa angka'
         }
       }
     },

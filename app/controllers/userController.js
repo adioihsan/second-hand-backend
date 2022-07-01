@@ -13,7 +13,7 @@ module.exports = {
             });
             
             var UserDetailData = {}
-            if (!userData) { return response(res, 404, false, 'User not found', null) }
+            if (!userData) { return response(res, 404, false, 'Pengguna tidak ditemukan', null) }
             if (filename) {
                 UserDetailData = {                      
                     name: name,
@@ -31,8 +31,8 @@ module.exports = {
                 }
             }
             const updatedUserDetail= await userData.user_detail.update(UserDetailData);
-            if (updatedUserDetail) { return response(res, 200, true, 'User Detail Updated!', updatedUserDetail) }
-            return response(res, 400, false, 'Update failed!', null)
+            if (updatedUserDetail) { return response(res, 200, true, 'User Detail di update!', updatedUserDetail) }
+            return response(res, 400, false, 'Update gagal!', null)
         } catch (error) {
             console.log(error); // setiap catch harus ada ini
             if (error.name === 'SequelizeDatabaseError') { // Bisa tau name error coba liat di console, ada bagian error name.. 
@@ -50,7 +50,7 @@ module.exports = {
             const userDetail = await user_detail.findOne({ 
                 where: { user_id: jwtData.id }
             });
-            if (!userDetail) { return response(res, 404, false, 'User Detail not found', userDetail) }
+            if (!userDetail) { return response(res, 404, false, 'User Detail tidak ditemukan', userDetail) }
             return response(res, 200, true, 'Success', userDetail);
         } catch (error) {
             console.log(error);

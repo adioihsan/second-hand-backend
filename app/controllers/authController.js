@@ -31,15 +31,15 @@ module.exports = {
                 console.log(info)
             }
           })
-          return response(res, 200, true, 'Register Success', null)
+          return response(res, 200, true, 'Register Berhasil', null)
         }
-        return response(res, 500, false, 'Register Failed', null)
+        return response(res, 500, false, 'Register Gagal', null)
       }
-      return response(res, 500, false, 'Register Failed', null)
+      return response(res, 500, false, 'Register Gagal', null)
     } catch (err) {
       console.log(err);
       if (err.name === 'SequelizeUniqueConstraintError') {
-        return response(res, 400, false, 'Email already exists', null)
+        return response(res, 400, false, 'Email sudah ada', null)
       } else if (err.name === 'SequelizeValidationError') {
         return response(res, 400, false, err.message, null)
       } else {
@@ -52,21 +52,21 @@ module.exports = {
     try {
       const { email, password } = req.body;
       if (!(email && password)) {
-        return response(res, 400, false, 'Email or Password is empty');
+        return response(res, 400, false, 'Email atau Kata Sandi kosong');
       }
       const userData = await user.findOne({ 
         where: { email: email },
         include: [{ model: user_detail }]
       });
       if (!userData) {
-        return response(res, 404, false, 'User not found', null);
+        return response(res, 404, false, 'Pengguna tidak ditemukan', null);
       }
       if (!userData.checkPassword(password)) {
-        return response(res, 401, false, 'Password is incorrect', null);
+        return response(res, 401, false, 'Kata Sandi Salah', null);
       }
       const name = userData.user_detail.name;
       const image = userData.user_detail.image;
-      return response(res, 200, true, 'Login success', {
+      return response(res, 200, true, 'Login berhasil', {
         token: userData.generateToken(name, image)
       })
     } catch (err) {
@@ -79,21 +79,21 @@ module.exports = {
     try {
       const { email } = req.body;
       if (!email) {
-        return response(res, 400, false, 'Email is empty');
+        return response(res, 400, false, 'Email kosong');
       }
       const isEmail = (email) => {
         const regex = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/ // Email validation menggunakan RegEx
         return regex.test(email);
       }
       if (!isEmail(email)) {
-        return response(res, 400, false, 'Email is invalid');
+        return response(res, 400, false, 'Email tidak valid');
       }
       const userData = await user.findOne({ 
         where: { email: email },
         include: [{ model: otp }]    
       });
       if (!userData) {
-        return response(res, 404, false, 'User not found', null);
+        return response(res, 404, false, 'Pengguna tidak ditemukan', null);
       } 
       const otpData = await userData.otp.update({
         code: Math.floor(Math.random() * 1000000),
@@ -108,7 +108,7 @@ module.exports = {
               console.log(info)
           }
         })
-        return response(res, 200, true, 'OTP has been sent, Please check your email!', null)
+        return response(res, 200, true, 'OTP sudah terkirim, Silahkan cek email Anda!', null)
       }
       return response(res, 500, false, 'Internal Server Error', null)
     } catch (err) {
@@ -125,34 +125,34 @@ module.exports = {
         return regex.test(email);
       }
       if (!isEmail(email)) {
-        return response(res, 400, false, 'Email is invalid');
+        return response(res, 400, false, 'Email tidak valid');
       }
       if (!code) {
-        return response(res, 400, false, 'Code is empty');
+        return response(res, 400, false, 'Code kosong');
       }
       if (!password) {
-        return response(res, 400, false, 'Password is empty');
+        return response(res, 400, false, 'Kata sandi kosong');
       }
       const userData = await user.findOne({
         where: { email: email },
         include: [{ model: otp }]
       });
       if (!userData) {
-        return response(res, 404, false, 'User not found', null);
+        return response(res, 404, false, 'Pengguna tidak ditemukan', null);
       }
       if(userData.otp.code !== parseInt(code)) {
-        return response(res, 400, false, 'OTP is incorrect', null);
+        return response(res, 400, false, 'OTP salah', null);
       }
       const dateNow = new Date().getTime() // ambil waktu sekarang
       const dateUpdated = userData.otp.updatedAt.getTime() // ambil tanggal update otp
       const expire_in = 120000 // 2 minutes
       const dateExpired = dateUpdated + expire_in
       if (dateNow > dateExpired) {
-        return response(res, 404, false, 'OTP Expired', null)
+        return response(res, 404, false, 'OTP Kadaluarsa', null)
       }
       const updateUser = user.update({ password: password })
       if (updateUser) {
-        return response(res, 200, true, 'Password has been updated', null)
+        return response(res, 200, true, 'Kata Sandi sudah di update', null)
       }
       return response(res, 500, false, 'Internal Server Error', null)
     } catch {
