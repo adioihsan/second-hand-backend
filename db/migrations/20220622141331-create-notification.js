@@ -1,4 +1,6 @@
 'use strict';
+
+const Constant = require('../../utils/constant')
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('notifications', {
@@ -14,7 +16,8 @@ module.exports = {
           model: 'products',
           key: 'id'
         },
-        allowNull: false
+        allowNull: false,
+        onDelete: 'cascade'
       },
       category_id: {
         type: Sequelize.INTEGER,
@@ -36,13 +39,22 @@ module.exports = {
           model: 'users',
           key: 'id'
         },
+        allowNull: false,
+        onDelete: 'cascade'
+      },
+      status: {
+        type: Sequelize.STRING,
         allowNull: false
       },
-      createdAt: {
+      is_checked: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       }

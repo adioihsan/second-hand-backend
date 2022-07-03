@@ -1,110 +1,11 @@
-
-const { user, user_detail, product, product_to_category, image, category, wishlist, negotiation } = require("../models");
-const response = require("../../utils/formatResponse"); 
+const { user, user_detail, product, product_to_category, image, category, wishlist, negotiation, notification } = require("../../models");
+const response = require("../../../utils/formatResponse"); 
 const fs = require("fs");
 const { Op } = require('sequelize');
-const helper = require('../../utils/helpers')
+const helper = require('../../../utils/helpers');
+const Constant = require("../../../utils/constant");
 
 module.exports = {
-    /* User Detail */
-    putUserDetail: async (req, res) => {
-        try {
-            const jwtData = req.user  // Ngambil Data dari req.body isinya data user, didapat dari passport-JWT
-            const { name, city, address, phone } = req.body;
-            const filename = req.file ? req.file.filename : null;
-            const userData = await user.findOne({  
-                where: { id: jwtData.id }, 
-                include: { model: user_detail } 
-            });
-            
-            var UserDetailData = {}
-            if (!userData) { return response(res, 404, false, 'User not found', null) }
-            if (filename) {
-                UserDetailData = {                      
-                    name: name,
-                    city: city,
-                    address: address,
-                    phone: phone,
-                    image: req.file.filename
-                }
-            } else {
-                UserDetailData = {                
-                    name: name,
-                    city: city,
-                    address: address,
-                    phone: phone
-                }
-            }
-            const updatedUserDetail= await userData.user_detail.update(UserDetailData);
-            if (updatedUserDetail) { return response(res, 200, true, 'User Detail Updated!', updatedUserDetail) }
-            return response(res, 400, false, 'Update failed!', null)
-        } catch (error) {
-            console.log(error); // setiap catch harus ada ini
-            if (error.name === 'SequelizeDatabaseError') { // Bisa tau name error coba liat di console, ada bagian error name.. 
-                return response(res, 400, false, error.message, null);
-            } else if (error.name === 'SequelizeValidationError') { // Ketika Validasi Dari Input Salah, Bisa tau name error coba liat di console, ada bagian error name.. 
-                return response(res, 400, false, error.errors[0].message, null);
-            } // Kalau mau nambahin lagi boleh, tinggal namenya error di else if
-            return response(res, 500, false, "Internal Server Error", null); // Jika Error Lainnya, 
-        }
-    },
-    getUserDetail: async (req, res) => { 
-        try {
-            const jwtData = req.user; // Ngambil Data dari req.body isinya data user, didapat dari passport-JWT
-            const userDetail = await user_detail.findOne({ 
-                where: { user_id: jwtData.id }
-            });
-            if (!userDetail) { return response(res, 404, false, 'User Detail not found', userDetail) }
-            return response(res, 200, true, 'Success', userDetail);
-        } catch (error) {
-            console.log(error);
-            if (error.name === 'SequelizeDatabaseError') {
-                return response(res, 400, false, error.message, null);
-            }
-            return response(res, 500, false, "Internal Server Error", null);
-        }
-    },
-
-    /* Image */
-    postImage: async (req, res) => {
-        try {
-            const file = req.file;
-            if (!file) { return response(res, 400, false, 'Please upload file', null) }
-            const imageData = await image.create({ url: file.filename })
-            if (imageData) { return response(res, 200, true, 'Image Uploaded!', imageData) }
-            return response(res, 400, false, 'Upload failed!', null)
-        } catch (error) {
-            console.log(error);
-            if (error.name === 'SequelizeDatabaseError') {
-                return response(res, 400, false, error.message, null);
-            }
-            return response(res, 500, false, "Internal Server Error", null);
-        }
-    },
-    deleteImage: async (req, res) => {
-        try {
-            console.log("Ke route ini");
-            const jwtData = req.user; 
-            const { url } = req.body
-            const urlArray = url.split("_") 
-            const idUserInImage = parseInt(urlArray[0])
-            if (idUserInImage !== jwtData.id) { return response(res, 400, false, 'You are not authorized to delete this image', null) }
-            const imageData = await image.findOne({ where: { url: url } })
-            if (!imageData) { return response(res, 404, false, 'Image not found', null) }
-            const deletedImage = await imageData.destroy()
-            if (deletedImage) { 
-                fs.unlinkSync(`./public/images/${url}`);
-                return response(res, 200, true, 'Image Deleted!', null) }
-            return response(res, 400, false, 'Delete failed!', null)
-        } catch (error) {
-            console.log(error);
-            if (error.name === 'SequelizeDatabaseError') {
-                return response(res, 400, false, error.message, null);
-            }
-            return response(res, 500, false, "Internal Server Error", null);
-        }
-    },
-
     /* Product */
     postProduct: async (req, res) => {
         var temp_product_id = 0
@@ -159,6 +60,7 @@ module.exports = {
                 return response(res, 400, false, 'Has failed to create product to category', null)
             }
             productData.categories = productToCategoryData
+            
             return response(res, 200, true, 'Success', {
                 product: productData
             });
@@ -222,16 +124,29 @@ module.exports = {
             // is is_release boolean
             var regex = /^(true|false)$/;
             if (!regex.test(is_release)) { return response(res, 400, false, 'is_release must be boolean (true/false)', null) }
-            const productData = await product.findOne({
-                where: { id: id }
-            })
+            const productData = await product.findOne({ where: { id: id } })
             if (!productData) { return response(res, 404, false, 'Product not found', null) }
-            else if (productData.user_id !== jwtData.id) { return response(res, 403, false, 'You are not authorized to delete this product', null) }
-            const updatedProduct = await productData.update({
-                is_release: is_release
-            });
+            else if (productData.user_id !== jwtData.id) { return response(res, 403, false, 'You are not authorized to release this product', null) }
+            if (productData.is_release === true && is_release === "true"){
+                return response(res, 400, true, 'Product Already Released!', null)
+            } else if (productData.is_release === false && is_release === "false") {
+                return response(res, 400, true, 'Product Already Unreleased!', null)
+            }
+            const updatedProduct = await productData.update({ is_release: is_release })
+            await notification.add({
+                category_id: 1,
+                product_id: productData.id,
+                user_id: productData.user_id,
+                price: productData.price,
+                status: Constant.ACCEPTED
+            })
             if (updatedProduct) {
-                return response(res, 200, true, 'Product Released!', updatedProduct)
+                if(updatedProduct.is_release == true) {
+                    return response(res, 200, true, 'Product Released!', updatedProduct)
+                }
+                if(updatedProduct.is_release == false) {
+                    return response(res, 200, true, 'Product Unreleased!', updatedProduct)
+                }
             }
             return response(res, 400, false, 'Release failed!', null)
         } catch (error) {
@@ -386,14 +301,9 @@ module.exports = {
     },
     getSellerProduct: async (req, res) => {
         try {
-            // 1. Get Semua 
-            // 2. Get Product Terjual
-            // 3. Get Belum Release
-            // 4. Get Barang yg di whislist
             const QFilter = req.query.filter || 1
             const arrayFilter = [1, 2, 3, 4]
             const filter = helper.slice(arrayFilter, [QFilter])[0]
-            console.log("Data Slicing: ", filter)
 
             if(!filter){
                 return response(res, 400, false, "Filter tidak tersedia", null)
@@ -411,19 +321,30 @@ module.exports = {
             } else if(filter == 3 ) {
                 whereData = { user_id: req.user.id, is_release: false }
             } else if(filter == 4 ) {
-                whereData = { user_id: req.user.id, is_release: false }
-                //TODO : Ini harus dibenerin
-                // const productData = await product.findAndCountAll({
-                //     limit: limit,
-                //     offset: offset,
-                //     distinct: true,
-                //     include: {
-                //         model: wishlist, where: {
-                //             [Op.]
-                //         }
-                //     }
-                // }) 
-                // return response(res, 200, false, "Sukses 2", productData)
+                const wishtlistData = await wishlist.findAll({
+                    include: {
+                        model: product, attributes: ['id', 'user_id'], 
+                        where : {
+                            user_id: req.user.id
+                        }
+                    }
+                })
+                const idWishArr = wishtlistData.map((row) =>  row.id )
+                const productData = await product.findAndCountAll({
+                    limit: limit,
+                    offset: offset,
+                    distinct: true,
+                    include: {
+                        model: wishlist, attributes: ['id', 'user_id'],
+                        where : { id : { [Op.in]: idWishArr } },
+                    }
+                }) 
+                productData.limit = limit
+                productData.totalPage = Math.ceil(productData.count / limit)
+                productData.page = parseInt(page)
+                productData.nextPage = page < productData.totalPage ? parseInt(page) + 1 : null
+                productData.prevPage = page > 1 ? parseInt(page) - 1 : null
+                return response(res, 200, false, "Sukses", productData)
             } else {
                 whereData = { user_id: req.user.id }
             }
@@ -450,183 +371,4 @@ module.exports = {
             return response(res, 500, false, "Internal Server Error", null);
         }   
     },
-
-    /* Whistlist API */
-    postProductWishlist: async (req, res) => {
-        try {
-            const { product_id } = req.body;
-            if (!product_id) {
-                return response(res, 400, false, 'Data harus di isi', null)
-            }
-            
-            const productData = await product.findOne({
-                where: { id: product_id, is_release: true, status: true }
-            })
-
-            if (!productData) {
-                return response(res, 404, false, 'Product not found', null)
-            } else if (productData.user_id == req.user.id) {
-                return response(res, 200, true, `You can't add your product to wishlist`, null)
-            }
-
-            const wish = await wishlist.findOne({ 
-                where: { product_id: product_id, user_id: req.user.id}
-            })
-            if (wish){
-                return response(res, 400, false, `Kamu tidak dapat menambahkan product yang sama ke wish`)
-            }
-            
-            const wishData = await wishlist.create({ 
-                product_id: product_id,
-                user_id: req.user.id // data dari jwt
-            });
-
-            if (!wishData) { return response(res, 500, false, 'Something went wrong', null) }
-            return response(res, 200, true, 'Success', wishData);
-        } catch (error) {
-            console.log(error);
-            if (error.name === 'SequelizeDatabaseError') {
-                return response(res, 400, false, error.message, null);
-            } else if(error.name === 'SequelizeValidationError') {
-                return response(res, 400, false, error.errors[0].message, null);
-            } else if(error.name === 'SequelizeUniqueConstraintError') {
-                return response(res, 400, false, error.errors[0].message, null);
-            } 
-            return response(res, 500, false, "Internal Server Error", null);
-        }
-    },
-    getProductWishlist: async (req, res) => { 
-        try {
-            const jwtData = req.user
-            const wish = await wishlist.findOne({ 
-                where: { id: req.params.id, user_id: jwtData.id },
-                include: [
-                    { model: user }, { model: product}
-                ]
-            });
-            if (!wish) { return response(res, 404, false, 'Wish List not found', wish) }
-
-            return response(res, 200, true, 'Success', wish);
-        } catch (error) {
-            console.log(error);
-            if (error.name === 'SequelizeDatabaseError') {
-                return response(res, 400, false, error.message, null);
-            }
-            return response(res, 500, false, "Internal Server Error", null);
-        }
-    },
-    deleteProductWishlist: async (req, res) => {
-        try {
-            const id = req.params.id
-            const wishData = await wishlist.findOne({
-                where: { id: id }
-            })
-            if (!wishData) { return response(res, 404, false, 'Wishlist not found', null); }
-            else if (wishData.user_id === req.user.id) { return response(res, 403, false, 'You are not allowed to delete this wishlist.', null) }
-            await wishData.destroy()
-            return response(res, 200, true, 'Success', null)
-        } catch (error) {
-            console.log(error);
-            if (error.name === 'SequelizeDatabaseError') {
-                return response(res, 400, false, error.message, null);
-            } else if (error.name === 'DataNotFoundError') {
-                return response(res, 404, false, error.message, null);
-            }
-            return response(res, 500, false, "Internal Server Error", null);
-        }
-    },  
-    getProductWishlistAll: async (req, res) => {
-        try {
-            const list = await wishlist.findAll({
-                where: { user_id: req.user.id }
-            })
-            if (!list) { return response(res, 404, false, 'Wish list Detail not found', list) }
-            return response(res, 200, true, 'Success', list);
-        } catch (error) {
-            console.log(error);
-            if (error.name === 'SequelizeDatabaseError') {
-                return response(res, 400, false, error.message, null);
-            }
-            return response(res, 500, false, "Internal Server Error", null);
-        }
-    },
-
-    /* Negotiation */
-    postNegotiation: async (req,res) => {
-        try {
-            const jwtData = req.user
-            const { product_id, price } = req.body
-
-            const userDetailData = await user_detail.findOne({ where: { user_id: jwtData.id} })
-
-            if (!userDetailData.name || !userDetailData.address || !userDetailData.phone) {
-                return response(res, 400, false, 'Please complete your profile first.', null)
-            }
-            const productData = await product.findOne({
-                where: { 
-                    id: product_id,
-                    status: true,
-                    is_release: true,
-                    user_id: { [Op.not]: jwtData.id }
-                }
-            }) 
-            if(!productData) { 
-                return response(res, 404, false, "Product not found!", null)
-            } else if(productData.status === false) {
-                return response(res, 404, false, "Product not available!", null)
-            }
-
-            const dataInput = {
-                user_id_buyer: jwtData.id,
-                product_id: productData.id,
-                price: price,
-                status: 1
-            }
-            console.log(dataInput)
-            const negotiationData =  await negotiation.create(dataInput)
-
-            if(!negotiationData) {
-                return response(res, 400, false, "Failed to create negotiationData", null)
-            }
-            return response(res, 200, true, "Success", negotiationData)
-
-        } catch (error) {
-            console.log(error)
-            if (error.name === 'SequelizeDatabaseError') {
-                return response(res, 400, false, error.message, null);
-            } else if(error.name === 'SequelizeValidationError') {
-                return response(res, 400, false, error.errors[0].message, null);
-            } else if(error.name === 'SequelizeUniqueConstraintError') {
-                return response(res, 400, false, error.errors[0].message, null);
-            } else {
-                return response(res, 500, false, "Internal Server Error", null);
-            }
-        }
-    },
-    getProfile: async (req, res) => { 
-        try {
-            const jwtData = req.user;
-            const profileData = await user.findOne({ 
-                where: { id: jwtData.id },
-                attributes: ['id', 'email'],
-                include: [
-                    { model: user_detail, attributes: ['name', 'image'] }
-                ],
-            })
-            if (!profileData) { return response(res, 404, false, 'User not found', null ) }
-
-            return response(res, 200, true, 'Success', {
-                id: profileData.id,
-                email: profileData.email,
-                name: profileData.user_detail.name,
-                photo: profileData.user_detail.image
-            });
-        } catch (error) {
-            console.log(error);
-            if (error.name === 'SequelizeDatabaseError') {
-                return response(res, 400, false, error.message, null);
-            }
-            return response(res, 500, false, "Internal Server Error", null);
-        }
-    }  
 }

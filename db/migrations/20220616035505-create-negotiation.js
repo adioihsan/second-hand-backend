@@ -1,4 +1,6 @@
 'use strict';
+
+const Constant = require('../../utils/constant')
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('negotiations', {
@@ -28,9 +30,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       status: {
-        type: Sequelize.INTEGER, // 0: pending, 1: accepted, 2: rejected 
-        allowNull: false,
-        defaultValue: 0
+        type: Sequelize.STRING,
+        allowNull: false
       },
       created_at: {
         allowNull: false,

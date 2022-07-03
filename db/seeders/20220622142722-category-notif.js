@@ -4,14 +4,14 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     
     const data = [{
-      title: 'Penawaran produk',
-      created_at: new Date(),
-      updated_at: new Date(),
-    }, {
       title: 'Berhasil Diterbitkan',
       created_at: new Date(),
       updated_at: new Date(),
-    }]
+    }, {
+      title: 'Penawaran produk',
+      created_at: new Date(),
+      updated_at: new Date(),
+    }, ]
     
     await queryInterface.bulkInsert('notification_categories', data);
   },
