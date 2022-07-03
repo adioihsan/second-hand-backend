@@ -15,6 +15,7 @@ const imagePvtCont = require('../app/controllers/private/image')
 const productPvtCont = require('../app/controllers/private/product')
 const whistlistPvtCon = require('../app/controllers/private/whistlist')
 const negotiationPvtCon = require('../app/controllers/private/negotiation')
+const notificationPvtCon = require('../app/controllers/private/notification')
 
 
 /* API home */
@@ -76,6 +77,10 @@ router.patch("/negotiation/:id/reject", auth, negotiationPvtCon.patchSellerRejec
 // router.put("/negotiation/:id", auth, negotiationPvtCon.putNegotiation);
 router.get("/negotiations", auth, negotiationPvtCon.getBuyerNegotiations);
 router.get("/negotiations/me", auth, negotiationPvtCon.getSellerNegotiations)
+
+/* Negtification API */
+router.get("/notifications", auth, notificationPvtCon.getAllNotifByUser)
+router.patch("/notification/:id/checked", auth, notificationPvtCon.patchNotifChecked)
 
 router.use(errorHandleJWT)
 

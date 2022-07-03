@@ -3,7 +3,7 @@ const response = require("../../../utils/formatResponse");
 const fs = require("fs");
 const { Op } = require('sequelize');
 const helper = require('../../../utils/helpers');
-const whistlist = require("./whistlist");
+const Constant = require("../../../utils/constant");
 
 module.exports = {
     /* Product */
@@ -60,6 +60,7 @@ module.exports = {
                 return response(res, 400, false, 'Has failed to create product to category', null)
             }
             productData.categories = productToCategoryData
+            
             return response(res, 200, true, 'Success', {
                 product: productData
             });
@@ -123,16 +124,29 @@ module.exports = {
             // is is_release boolean
             var regex = /^(true|false)$/;
             if (!regex.test(is_release)) { return response(res, 400, false, 'is_release must be boolean (true/false)', null) }
-            const productData = await product.findOne({
-                where: { id: id }
-            })
+            const productData = await product.findOne({ where: { id: id } })
             if (!productData) { return response(res, 404, false, 'Product not found', null) }
             else if (productData.user_id !== jwtData.id) { return response(res, 403, false, 'You are not authorized to release this product', null) }
-            const updatedProduct = await productData.update({
-                is_release: is_release
-            });
+            if (productData.is_release === true && is_release === "true"){
+                return response(res, 400, true, 'Product Already Released!', null)
+            } else if (productData.is_release === false && is_release === "false") {
+                return response(res, 400, true, 'Product Already Unreleased!', null)
+            }
+            const updatedProduct = await productData.update({ is_release: is_release })
+            await notification.add({
+                category_id: 1,
+                product_id: productData.id,
+                user_id: productData.user_id,
+                price: productData.price,
+                status: Constant.ACCEPTED
+            })
             if (updatedProduct) {
-                return response(res, 200, true, 'Product Released!', updatedProduct)
+                if(updatedProduct.is_release == true) {
+                    return response(res, 200, true, 'Product Released!', updatedProduct)
+                }
+                if(updatedProduct.is_release == false) {
+                    return response(res, 200, true, 'Product Unreleased!', updatedProduct)
+                }
             }
             return response(res, 400, false, 'Release failed!', null)
         } catch (error) {

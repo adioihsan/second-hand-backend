@@ -1,12 +1,9 @@
 const { user, user_detail, product, product_to_category, image, category, wishlist, negotiation, notification } = require("../../models");
-const response = require("../../../utils/formatResponse"); 
-const fs = require("fs");
-const { Op } = require('sequelize');
-const helper = require('../../../utils/helpers');
+const response = require("../../../utils/formatResponse")
 
 module.exports = {
      /* User Detail */
-     putUserDetail: async (req, res) => {
+    putUserDetail: async (req, res) => {
         try {
             const jwtData = req.user  // Ngambil Data dari req.body isinya data user, didapat dari passport-JWT
             const { name, city, address, phone } = req.body;
@@ -74,7 +71,6 @@ module.exports = {
                 ],
             })
             if (!profileData) { return response(res, 404, false, 'User not found', null ) }
-
             return response(res, 200, true, 'Success', {
                 id: profileData.id,
                 email: profileData.email,
