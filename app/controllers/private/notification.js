@@ -1,4 +1,4 @@
-const { user, user_detail, product, product_to_category, image, category, wishlist, negotiation, notification, notification_category } = require("../../models")
+const { product, notification, notification_category } = require("../../models")
 const response = require("../../../utils/formatResponse")
 
 /* Notification */

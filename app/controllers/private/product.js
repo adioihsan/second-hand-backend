@@ -91,9 +91,6 @@ module.exports = {
                 return response(res, 403, false, 'You are not authorized to delete this product', null) 
             }
             const deletedProduct = await productData.destroy()
-            if (deletedProduct) {
-                return response(res, 500, false, 'Something went wrong deleting this product', null);
-            }
             if (productData.images_url) {
                 const imageUrls = productData.images_url.split(',')
                 
@@ -188,8 +185,7 @@ module.exports = {
     },
     putProduct: async (req, res) => {
         try {
-            const jwtData = req.user;
-            const id = req.params.id;
+            const id = req.params.id
             const { name, price, description, images_url, images_url_delete } = req.body
 
             if(images_url){
@@ -201,19 +197,13 @@ module.exports = {
                     if(!imageSearch) { return response(res, 400, false, `Image ${imagesUrl[i]} tidak ditemukan.`) }
                 }
             }
-
-            if(images_url_delete){
-                const imagesUrlDelete = images_url_delete.split(',')
-                // TODO: Cek apakah images_url datanya ada yg sama dengan images_url_delete, jika ada maka return
-                // response gagal, karena ada data yang sama dengan input image_url
-            }
             
             const productData = await product.findOne({
                 where: { id: id },
                 include: { model: category, attributes: ['id', 'name'] , through: { attributes: [] } } 
             })
             if (!productData) { return response(res, 404, false, 'Product not found', null) }
-            else if (productData.user_id !== jwtData.id) { return response(res, 403, false, 'You are not authorized to update this product', null) }
+            else if (productData.user_id !== req.user.id) { return response(res, 403, false, 'You are not authorized to update this product', null) }
             
             const deleteProductCategory = await product_to_category.destroy({ where: { product_id: id } })
             const categories = (typeof req.body.categories === 'string') ? [req.body.categories] : req.body.categories
@@ -225,7 +215,7 @@ module.exports = {
                     return { product_id: id, category_id: category }
                 })
                 if (categoryData.length !== categories.length) { return response(res, 400, false, 'Category not found', null) }
-                // return response(res, 200, true, 'Success', productData);
+                
                 const productToCategoryData = await product_to_category.bulkCreate(data)
                 if (!productToCategoryData ) {
                     return response(res, 400, false, 'Has failed to create product to category', null)
@@ -237,16 +227,21 @@ module.exports = {
                 description: description,
                 images_url: images_url
             })
-            const responseData = await product.findOne({ where: { id: id },
+            var resProduct = await product.findOne({ where: { id: id },
                 include: [
-                    { model: user, attributes: ['id', 'email'], include: { model: user_detail, attributes: ['name','image'] } },
+                    { model: user, attributes: ['id'], include: { model: user_detail, attributes: ['name','city', 'image',] } },
                     { model: category, attributes: ['id', 'name'] , through: { attributes: ['id'] } }
                 ]
             })
-
-            if (updatedProduct) {
-                // TODO: Hapus image dari database yg urlnya image_url_delete
+            responseData = resProduct.toJSON()
+            const userData = {
+                id: resProduct.id,
+                name: resProduct.user.user_detail.name,
+                city: resProduct.user.user_detail.city,
+                image: resProduct.user.user_detail.image,
             }
+            delete responseData.user
+            responseData.user = userData
 
             if (updatedProduct) {
                 return response(res, 200, true, 'Product Updated!', responseData)
@@ -318,12 +313,19 @@ module.exports = {
             const limit = parseInt(req.query.limit) || 12
             const offset = (parseInt(page) - 1) * limit
             
-            var whereData = {}
-            if(filter == 2 ){
-                whereData = { user_id: req.user.id, status: false }
-            } else if(filter == 3 ) {
-                whereData = { user_id: req.user.id, is_release: false }
-            } else if(filter == 4 ) {
+            var dataSearch = {
+                limit: limit,
+                offset: offset,
+                distinct: true,
+                include:  [
+                    { model: category, attributes: ['id', 'name'] , through: { attributes: [] } }
+                ]
+            }
+            if(filter == 2){
+                dataSearch.where = { user_id: req.user.id, status: false }
+            } else if(filter == 3) {
+                dataSearch.where = { user_id: req.user.id, is_release: false }
+            } else if(filter == 4) {
                 const wishtlistData = await wishlist.findAll({
                     include: {
                         model: product, attributes: ['id', 'user_id'], 
@@ -349,15 +351,9 @@ module.exports = {
                 productData.prevPage = page > 1 ? parseInt(page) - 1 : null
                 return response(res, 200, false, "Sukses", productData)
             } else {
-                whereData = { user_id: req.user.id }
+                dataSearch.where = { user_id: req.user.id }
             }
-
-            const productData = await product.findAndCountAll({
-                limit: limit,
-                offset: offset,
-                distinct: true,
-                where: whereData
-            }) 
+            const productData = await product.findAndCountAll(dataSearch) 
 
             productData.limit = limit
             productData.totalPage = Math.ceil(productData.count / limit)

@@ -1,12 +1,10 @@
-const { user, user_detail, product, product_to_category, image, category, sequelize } = require("../../models");
+const { user, user_detail, product, category } = require("../../models");
 const response = require("../../../utils/formatResponse"); 
 const { Op } = require('sequelize');
 
 module.exports = {
     getCategories: async (req, res) => {
         try {
-            const jwtData = req.category; // Ngambil Data dari req.body isinya data user, didapat dari passport-JWT
-            console.log("JWT : ", jwtData); // coba liat data nya
             const categories = await category.findAll();
             if (!categories) { return response(res, 404, false, 'Category Detail not found', categories) }
             return response(res, 200, true, 'Success', categories);

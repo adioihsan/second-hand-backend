@@ -1,4 +1,4 @@
-const { user, user_detail, product, product_to_category, image, category, wishlist, negotiation, notification } = require("../../models")
+const { image } = require("../../models")
 const response = require("../../../utils/formatResponse")
 const { uploudImage, deleteImage} = require("../../libs/firebaseStorage")
 
