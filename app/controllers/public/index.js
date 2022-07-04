@@ -24,7 +24,7 @@ module.exports = {
             const productData = await product.findOne({ 
                 where: {  id: id, is_release: true },
                 include: [
-                    { model: user, attributes: ['id', 'email'], include: { model: user_detail, attributes: ['name','city']} },
+                    { model: user, attributes: ['id', 'email'], include: { model: user_detail, attributes: ['name','city', 'image']} },
                     { model: category, attributes: ['id', 'name'] , through: { attributes: [] } }
                 ],
             })
@@ -33,8 +33,9 @@ module.exports = {
             const data = productData.toJSON()
             const userData = {
                 id: productData.id,
-                city: productData.user.user_detail.city,
                 name: productData.user.user_detail.name,
+                city: productData.user.user_detail.city,
+                image: productData.user.user_detail.image,
             }
             delete data.user
             data.user = userData
