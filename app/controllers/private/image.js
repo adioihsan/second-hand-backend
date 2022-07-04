@@ -1,20 +1,17 @@
 const { user, user_detail, product, product_to_category, image, category, wishlist, negotiation, notification } = require("../../models")
 const response = require("../../../utils/formatResponse")
-const fs = require("fs")
-const { Op } = require('sequelize')
-const helper = require('../../../utils/helpers')
+const { uploudImage, deleteImage} = require("../../libs/firebaseStorage")
 
 module.exports = {
-    /* Image */
+    /* Image */  
     postImage: async (req, res) => {
         try {
-            const file = req.file;
-            if (!file) { return response(res, 400, false, 'Please upload file', null) }
-            const imageData = await image.create({ url: file.filename })
-            if (imageData) { return response(res, 200, true, 'Image Uploaded!', imageData) }
+            const uploud = await uploudImage(req)
+            const imageData = await image.create({ url: uploud.metadata.name })
+            if (imageData) { return response(res, 200, true, 'Image Uploaded!', { url : imageData.url }) }
             return response(res, 400, false, 'Upload failed!', null)
         } catch (error) {
-            console.log(error);
+            console.log(error)
             if (error.name === 'SequelizeDatabaseError') {
                 return response(res, 400, false, error.message, null);
             }
@@ -23,7 +20,6 @@ module.exports = {
     },
     deleteImage: async (req, res) => {
         try {
-            console.log("Ke route ini");
             const jwtData = req.user; 
             const { url } = req.body
             const urlArray = url.split("_") 
@@ -32,9 +28,11 @@ module.exports = {
             const imageData = await image.findOne({ where: { url: url } })
             if (!imageData) { return response(res, 404, false, 'Image not found', null) }
             const deletedImage = await imageData.destroy()
+ 
             if (deletedImage) { 
-                fs.unlinkSync(`./public/images/${url}`);
-                return response(res, 200, true, 'Image Deleted!', null) }
+                deleteImage(url)
+                return response(res, 200, true, 'Image Deleted!', null) 
+            }
             return response(res, 400, false, 'Delete failed!', null)
         } catch (error) {
             console.log(error);

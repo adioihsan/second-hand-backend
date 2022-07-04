@@ -1,8 +1,5 @@
 const { user, user_detail, product, product_to_category, image, category, wishlist, negotiation, notification } = require("../../models");
-const response = require("../../../utils/formatResponse"); 
-const fs = require("fs");
-const { Op } = require('sequelize');
-const helper = require('../../../utils/helpers');
+const response = require("../../../utils/formatResponse")
 
 module.exports = {
     

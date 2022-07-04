@@ -1,5 +1,5 @@
 'use strict';
-const { Model } = require('sequelize');
+const { Model } = require('sequelize')
 
 module.exports = (sequelize, DataTypes) => {
   class negotiation extends Model {
@@ -12,7 +12,13 @@ module.exports = (sequelize, DataTypes) => {
     user_id_buyer: DataTypes.INTEGER,
     product_id: DataTypes.INTEGER,
     price: DataTypes.INTEGER,
-    status: DataTypes.INTEGER
+    status: {
+      type: DataTypes.STRING, // 1. Pending 2. Accepted 3. Rejected
+      allowNull: false,
+      validate: {
+        is: /^(pending|accepted|rejected)$/
+      }
+    }
   }, {
     sequelize,
     tableName: 'negotiations',
