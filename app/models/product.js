@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
-        isInt: { msg: 'Price must be integer' },
+        isInt: { msg: 'Harga harus berupa angka' },
         min: 0
       }
     },

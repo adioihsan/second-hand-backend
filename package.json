@@ -30,6 +30,7 @@
     "pg-hstore": "^2.3.4",
     "postman-to-openapi": "^2.2.1",
     "sequelize": "^6.20.1",
+    "swagger-ui-express": "^4.4.0",
     "xhr2": "^0.2.1"
   },
   "devDependencies": {
