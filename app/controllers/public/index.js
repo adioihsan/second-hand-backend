@@ -1,12 +1,10 @@
-const { user, user_detail, product, product_to_category, image, category, sequelize } = require("../../models");
+const { user, user_detail, product, category } = require("../../models");
 const response = require("../../../utils/formatResponse"); 
 const { Op } = require('sequelize');
 
 module.exports = {
     getCategories: async (req, res) => {
         try {
-            const jwtData = req.category; // Ngambil Data dari req.body isinya data user, didapat dari passport-JWT
-            console.log("JWT : ", jwtData); // coba liat data nya
             const categories = await category.findAll();
             if (!categories) { return response(res, 404, false, 'Category Detail not found', categories) }
             return response(res, 200, true, 'Success', categories);
@@ -24,7 +22,7 @@ module.exports = {
             const productData = await product.findOne({ 
                 where: {  id: id, is_release: true },
                 include: [
-                    { model: user, attributes: ['id', 'email'], include: { model: user_detail, attributes: ['name','city']} },
+                    { model: user, attributes: ['id', 'email'], include: { model: user_detail, attributes: ['name','city', 'image']} },
                     { model: category, attributes: ['id', 'name'] , through: { attributes: [] } }
                 ],
             })
@@ -33,8 +31,9 @@ module.exports = {
             const data = productData.toJSON()
             const userData = {
                 id: productData.id,
-                city: productData.user.user_detail.city,
                 name: productData.user.user_detail.name,
+                city: productData.user.user_detail.city,
+                image: productData.user.user_detail.image,
             }
             delete data.user
             data.user = userData

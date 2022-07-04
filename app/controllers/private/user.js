@@ -1,39 +1,28 @@
-const { user, user_detail, product, product_to_category, image, category, wishlist, negotiation, notification } = require("../../models");
+const { user, user_detail, image } = require("../../models");
 const response = require("../../../utils/formatResponse")
+const { uploudImage, deleteImage } = require("../../libs/firebaseStorage")
 
 module.exports = {
      /* User Detail */
     putUserDetail: async (req, res) => {
         try {
             const jwtData = req.user  // Ngambil Data dari req.body isinya data user, didapat dari passport-JWT
-            const { name, city, address, phone } = req.body;
-            const filename = req.file ? req.file.filename : null;
+            const { name, city, address, phone, image_url } = req.body
             const userData = await user.findOne({  
                 where: { id: jwtData.id }, 
-                include: { model: user_detail } 
-            });
-            
-            var UserDetailData = {}
-            if (!userData) { return response(res, 404, false, 'User not found', null) }
-            if (filename) {
-                UserDetailData = {                      
-                    name: name,
-                    city: city,
-                    address: address,
-                    phone: phone,
-                    image: req.file.filename
-                }
-            } else {
-                UserDetailData = {                
-                    name: name,
-                    city: city,
-                    address: address,
-                    phone: phone
-                }
+                include: { model: user_detail }
+            })
+            if(image_url){
+                const imageSearch = await image.findOne({ where: { url: image_url } })
+                if(!imageSearch) { return response(res, 400, false, `Image ${image_url} tidak ditemukan.`) }
             }
-            const updatedUserDetail= await userData.user_detail.update(UserDetailData);
-            if (updatedUserDetail) { return response(res, 200, true, 'User Detail Updated!', updatedUserDetail) }
-            return response(res, 400, false, 'Update failed!', null)
+            if (!userData) { return response(res, 404, false, 'Pengguna tidak ditemukan', null) }
+            const updatedUserDetail= await userData.user_detail.update({                
+                name: name, city: city, address: address, phone: phone, image: image_url
+            })
+            if (updatedUserDetail) { return response(res, 200, true, 'User Detail di update!', updatedUserDetail) }
+            return response(res, 400, false, 'Update gagal!', null)
+
         } catch (error) {
             console.log(error); // setiap catch harus ada ini
             if (error.name === 'SequelizeDatabaseError') { // Bisa tau name error coba liat di console, ada bagian error name.. 
@@ -50,7 +39,7 @@ module.exports = {
             const userDetail = await user_detail.findOne({ 
                 where: { user_id: jwtData.id }
             });
-            if (!userDetail) { return response(res, 404, false, 'User Detail not found', userDetail) }
+            if (!userDetail) { return response(res, 404, false, 'User Detail tidak ditemukan', userDetail) }
             return response(res, 200, true, 'Success', userDetail);
         } catch (error) {
             console.log(error);

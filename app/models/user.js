@@ -24,10 +24,10 @@ module.exports = (sequelize, DataTypes) => {
       try {
         const user = await this.findOne({ where: { email: email }});
         if(!user) {
-          return Promise.reject(new Error('User not found'));
+          return Promise.reject(new Error('Pengguna tidak ditemukan'));
         }
         if(!user.checkPassword(password)){
-          return Promise.reject(new Error('Password is incorrect'));
+          return Promise.reject(new Error('Password salah!'));
         }
         return Promise.resolve(user);
       } catch (error) {

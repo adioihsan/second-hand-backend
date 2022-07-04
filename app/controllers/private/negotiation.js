@@ -1,4 +1,4 @@
-const { user, user_detail, product, product_to_category, image, category, wishlist, negotiation, notification } = require("../../models")
+const { user, user_detail, product, negotiation, notification } = require("../../models")
 const response = require("../../../utils/formatResponse")
 const { Op } = require('sequelize')
 const Constant = require('../../../utils/constant')
