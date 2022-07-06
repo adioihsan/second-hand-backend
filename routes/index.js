@@ -41,6 +41,7 @@ router.post("/reset-password", authPubCon.postResetPassword)
 router.get('/categories', publicController.getCategories)
 router.get('/product/:id', publicController.getProduct)         
 router.get('/products', publicController.getProducts)  
+router.get('/:seller_id/products', publicController.getProductsSeller)
 
 /** 
  *  Private API 
