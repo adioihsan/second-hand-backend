@@ -1,6 +1,7 @@
 const { user, user_detail, product, category } = require("../../models");
 const response = require("../../../utils/formatResponse"); 
 const { Op } = require('sequelize');
+const helper = require('../../../utils/helpers');
 
 module.exports = {
     getCategories: async (req, res) => {
@@ -112,4 +113,57 @@ module.exports = {
             return response(res, 500, false, "Internal Server Error", null);
         }
     }, 
+    getProductsSeller: async (req, res) => {
+        try {
+            const QFilter = req.query.filter || 1
+            const arrayFilter = [1, 2, 3]
+            const filter = helper.slice(arrayFilter, [QFilter])[0]
+            const seller_id = req.params.seller_id
+            if(!filter){
+                return response(res, 400, false, "Filter tidak tersedia", null)
+            }
+            const page = parseInt(req.query.page) || 1
+            if (page < 1) {
+                return response(res, 400, false, 'Page must be integer greater than 0', null)
+            }
+            const limit = parseInt(req.query.limit) || 12
+            const offset = (parseInt(page) - 1) * limit
+            
+            var dataSearch = {
+                limit: limit,
+                offset: offset,
+                distinct: true,
+                is_release: true,
+                include:  [
+                    { model: category, attributes: ['id', 'name'] , through: { attributes: [] } }
+                ],
+                where: { 
+                    user_id: seller_id
+                },
+                order: [
+                    ["status", "DESC"]
+                ]
+            }
+            if(filter == 2){ // available
+                dataSearch.where.status = true 
+            } else if(filter == 3) {  
+                dataSearch.where.status = false 
+            }
+            const productData = await product.findAndCountAll(dataSearch) 
+
+            productData.limit = limit
+            productData.totalPage = Math.ceil(productData.count / limit)
+            productData.page = parseInt(page)
+            productData.nextPage = page < productData.totalPage ? parseInt(page) + 1 : null
+            productData.prevPage = page > 1 ? parseInt(page) - 1 : null
+            return response(res, 200, true, 'Success', productData);
+
+        } catch (error) {
+            console.log(error);
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null);
+            }
+            return response(res, 500, false, "Internal Server Error", null);
+        }   
+    }
 }
