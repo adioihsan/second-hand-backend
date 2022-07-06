@@ -1,13 +1,38 @@
+![staging](https://github.com/Doritos7/second-hand-backend/actions/workflows/test.yml/badge.svg) 
+<!-- ![main](https://github.com/Doritos7/second-hand-backend/actions/workflows/main.yml/badge.svg) -->
+# [Backend] Second Hand Product
 
-## [Backend] Second Hand Product
-This is a API Documentation for the API Second Hand Products. To complete the MSIB Binar Academy capstone project. Feel free to contribute and fork. 
+<p align="center">
+  <img width=150 src="https://storage.googleapis.com/secondhand-be-test.appspot.com/secondhand.png" alt="Herbify logo" align="center">
+</p>
 
-# How to use
+
+This is a Backend Repository for Second Hand Products Application. To complete the MSIB Binar Academy capstone project. Feel free to contribute or fork. 
+
+
+## Also see 
+- [Staging Deploy Backend](https://secondhand-be-test.herokuapp.com)
+- [Frontend Repository](https://github.com/Doritos7/second-hand-frontend)
+
+
+## How to use
 
 1. Install the dependencies : ``` npm install ```
-2. Setting .env file : copy the .env.example to .env and fill the values
+2. Make project on firebase, add storage in your project, go to GCP to make bucket storage public
+2. Setup .env file : copy the .env.example to .env and fill the values
 3. Create Database : ``` sequelize db:create || npx sequelize-cli db:create ```
 4. Run Migrations : ``` sequelize db:migrate || npx sequelize-cli db:migrate ```
-5. Run Seeders``` sequelize db:seed:all || npx sequelize-cli db:seed:all ```
+5. Run Seeders : ``` sequelize db:seed:all || npx sequelize-cli db:seed:all ```
 6. Run Project : ``` npm start ```
-7. See API Documentation : ``` Go to {{server}}/docs to see the Swagger API documentation . ```
+7. See API Documentation :  Go to ```{{server}}/docs``` to see the Swagger API documentation . 
+
+## Tech
+The main Technology what we use to build this application is:
+
+1. Node.js
+2. Express.js
+3. Sequelize ORM
+4. Passport.js
+5. PostgreSQL
+6. Firebase Storage
+7. Swagger Documentation
