@@ -8,14 +8,14 @@ module.exports = {
         try {
             const uploud = await uploudImage(req)
             const imageData = await image.create({ url: uploud.metadata.name })
-            if (imageData) { return response(res, 200, true, 'Image Uploaded!', { url : imageData.url }) }
-            return response(res, 400, false, 'Upload failed!', null)
+            if (imageData) { return response(res, 200, true, 'Upload foto!', { url : imageData.url }) }
+            return response(res, 400, false, 'Gagal upload!', null)
         } catch (error) {
             console.log(error)
             if (error.name === 'SequelizeDatabaseError') {
                 return response(res, 400, false, error.message, null);
             }
-            return response(res, 500, false, "Internal Server Error", null);
+            return response(res, 500, false, "Server Internal lagi error nih", null);
         }
     },
     deleteImage: async (req, res) => {
@@ -24,22 +24,22 @@ module.exports = {
             const { url } = req.body
             const urlArray = url.split("_") 
             const idUserInImage = parseInt(urlArray[0])
-            if (idUserInImage !== jwtData.id) { return response(res, 400, false, 'You are not authorized to delete this image', null) }
+            if (idUserInImage !== jwtData.id) { return response(res, 400, false, 'Kamu belum terotorisasi untuk menghapus foto ini', null) }
             const imageData = await image.findOne({ where: { url: url } })
-            if (!imageData) { return response(res, 404, false, 'Image not found', null) }
+            if (!imageData) { return response(res, 404, false, 'Foto tidak ditemukan', null) }
             const deletedImage = await imageData.destroy()
  
             if (deletedImage) { 
                 deleteImage(url)
-                return response(res, 200, true, 'Image Deleted!', null) 
+                return response(res, 200, true, 'Foto terhapus!', null) 
             }
-            return response(res, 400, false, 'Delete failed!', null)
+            return response(res, 400, false, 'Gagal hapus!', null)
         } catch (error) {
             console.log(error);
             if (error.name === 'SequelizeDatabaseError') {
                 return response(res, 400, false, error.message, null);
             }
-            return response(res, 500, false, "Internal Server Error", null);
+            return response(res, 500, false, "Server Internal lagi error nih", null);
         }
     },
 }

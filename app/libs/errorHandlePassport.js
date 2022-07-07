@@ -12,9 +12,9 @@ module.exports = (err, req, res, next) => {
         } else if (err.message === 'jwt expired') {
             return response(res, 400, false, err.message, null);
         } else if (err.message === 'ErrorInputExtension') {
-            return response(res, 415, false, "Tipe media tidak support", null);
+            return response(res, 415, false, "Tipe media tidak mendukung", null);
         } else {
-            const msg = err.message || 'Internal Server Error';
+            const msg = err.message || 'Server Internal lagi error nih';
             return response(res, 500, false, msg, null);
         }
     }

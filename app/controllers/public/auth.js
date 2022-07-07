@@ -43,7 +43,7 @@ module.exports = {
       } else if (err.name === 'SequelizeValidationError') {
         return response(res, 400, false, err.message, null)
       } else {
-        return response(res, 500, false, 'Internal Server Error')
+        return response(res, 500, false, 'Server Internal lagi error nih')
       }
     }
   },
@@ -71,7 +71,7 @@ module.exports = {
       })
     } catch (err) {
       console.log(err);
-      return response(res, 500, false, 'Internal Server Error');
+      return response(res, 500, false, 'Server Internal lagi error nih');
     }
   },
   // POST /forgot-password
@@ -110,10 +110,10 @@ module.exports = {
         })
         return response(res, 200, true, 'OTP sudah terkirim, Silahkan cek email Anda!', null)
       }
-      return response(res, 500, false, 'Internal Server Error', null)
+      return response(res, 500, false, 'Server Internal lagi error nih', null)
     } catch (err) {
       console.log(err);
-      return response(res, 500, false, 'Internal Server Error');
+      return response(res, 500, false, 'Server Internal lagi error nih');
     }  
   },
   // POST /reset-password
@@ -154,10 +154,10 @@ module.exports = {
       if (updateUser) {
         return response(res, 200, true, 'Kata Sandi sudah di update', null)
       }
-      return response(res, 500, false, 'Internal Server Error', null)
+      return response(res, 500, false, 'Server Internal lagi error nih', null)
     } catch {
       console.log(err);
-      return response(res, 500, false, 'Internal Server Error');
+      return response(res, 500, false, 'Server Internal lagi error nih');
     }
   },
 };
