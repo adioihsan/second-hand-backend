@@ -16,16 +16,16 @@ module.exports = {
             })
 
             if (!productData) {
-                return response(res, 404, false, 'Product not found', null)
+                return response(res, 404, false, 'Produk tidak ditemukan', null)
             } else if (productData.user_id == req.user.id) {
-                return response(res, 200, true, `You can't add your product to wishlist`, null)
+                return response(res, 200, true, `Kamu tidak bisa menambahkan produkmu ke wishlist`, null)
             }
 
             const wish = await wishlist.findOne({ 
                 where: { product_id: product_id, user_id: req.user.id}
             })
             if (wish){
-                return response(res, 400, false, `Kamu tidak dapat menambahkan product yang sama ke wish`)
+                return response(res, 400, false, `Kamu tidak dapat menambahkan produk yang sama ke wish`)
             }
             
             const wishData = await wishlist.create({ 
@@ -33,8 +33,8 @@ module.exports = {
                 user_id: req.user.id // data dari jwt
             });
 
-            if (!wishData) { return response(res, 500, false, 'Something went wrong', null) }
-            return response(res, 200, true, 'Success', wishData);
+            if (!wishData) { return response(res, 500, false, 'Ada sesuatu yang tidak beres', null) }
+            return response(res, 200, true, 'Berhasil', wishData);
         } catch (error) {
             console.log(error);
             if (error.name === 'SequelizeDatabaseError') {
@@ -44,7 +44,7 @@ module.exports = {
             } else if(error.name === 'SequelizeUniqueConstraintError') {
                 return response(res, 400, false, error.errors[0].message, null);
             } 
-            return response(res, 500, false, "Internal Server Error", null);
+            return response(res, 500, false, "Server Internal lagi error nih", null);
         }
     },
     getProductWishlist: async (req, res) => { 
@@ -56,15 +56,15 @@ module.exports = {
                     { model: user }, { model: product}
                 ]
             });
-            if (!wish) { return response(res, 404, false, 'Wish List not found', wish) }
+            if (!wish) { return response(res, 404, false, 'Wishlist tidak ditemukan', wish) }
 
-            return response(res, 200, true, 'Success', wish);
+            return response(res, 200, true, 'Berhasil', wish);
         } catch (error) {
             console.log(error);
             if (error.name === 'SequelizeDatabaseError') {
                 return response(res, 400, false, error.message, null);
             }
-            return response(res, 500, false, "Internal Server Error", null);
+            return response(res, 500, false, "Server Internal lagi error nih", null);
         }
     },
     deleteProductWishlist: async (req, res) => {
@@ -73,10 +73,10 @@ module.exports = {
             const wishData = await wishlist.findOne({
                 where: { id: id }
             })
-            if (!wishData) { return response(res, 404, false, 'Wishlist not found', null); }
-            else if (wishData.user_id === req.user.id) { return response(res, 403, false, 'You are not allowed to delete this wishlist.', null) }
+            if (!wishData) { return response(res, 404, false, 'Wishlist tidak ditemukan', null); }
+            else if (wishData.user_id === req.user.id) { return response(res, 403, false, 'Kamu tidak diperbolehkan untuk menghapus wishlist ini', null) }
             await wishData.destroy()
-            return response(res, 200, true, 'Success', null)
+            return response(res, 200, true, 'Berhasil', null)
         } catch (error) {
             console.log(error);
             if (error.name === 'SequelizeDatabaseError') {
@@ -84,7 +84,7 @@ module.exports = {
             } else if (error.name === 'DataNotFoundError') {
                 return response(res, 404, false, error.message, null);
             }
-            return response(res, 500, false, "Internal Server Error", null);
+            return response(res, 500, false, "Server Internal lagi error nih", null);
         }
     },  
     getProductWishlistAll: async (req, res) => {
@@ -92,14 +92,14 @@ module.exports = {
             const list = await wishlist.findAll({
                 where: { user_id: req.user.id }
             })
-            if (!list) { return response(res, 404, false, 'Wish list Detail not found', list) }
-            return response(res, 200, true, 'Success', list);
+            if (!list) { return response(res, 404, false, 'Rincian wishlist tidak ditemukan', list) }
+            return response(res, 200, true, 'Berhasil', list);
         } catch (error) {
             console.log(error);
             if (error.name === 'SequelizeDatabaseError') {
                 return response(res, 400, false, error.message, null);
             }
-            return response(res, 500, false, "Internal Server Error", null);
+            return response(res, 500, false, "Server Internal lagi error nih", null);
         }
     },
 

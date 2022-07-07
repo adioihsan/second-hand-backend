@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notEmpty: {
-          msg: 'Name is required'
+          msg: 'Nama diperlukan'
         }
       }
     },
@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
-        isInt: { msg: 'User id must be integer' },
+        isInt: { msg: 'id pengguna harus berupa angka' },
         min: 1
       }
     },
