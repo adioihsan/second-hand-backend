@@ -4,12 +4,12 @@ const Constant = require('../../utils/constant')
 module.exports = (sequelize, DataTypes) => {
   class notification extends Model {
     static associate(models) {
-      this.belongsTo(models.product, {foreignKey: 'product_id'} )
+      this.belongsTo(models.negotiation, { foreignKey: 'nego_id' } )
+      this.belongsTo(models.product, { foreignKey: 'product_id' } )
       this.belongsTo(models.notification_category, { foreignKey: 'category_id', as: 'category' })
     }
 
-    static async add({category_id, product_id, user_id, nego_price, price, status}) {
-      console.log("Cetegory is : " + category_id);
+    static async add({category_id, product_id, user_id, nego_price, price, status, nego_id}) {
       if(category_id == 1){
         return this.create({
           product_id : product_id,
@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
           user_id : user_id,
           nego_price : nego_price,
           price : price,
+          nego_id : nego_id,
           status : status
         })
       } 
@@ -42,6 +43,7 @@ module.exports = (sequelize, DataTypes) => {
   notification.init({
     product_id: DataTypes.INTEGER,
     category_id: DataTypes.INTEGER,
+    nego_id: DataTypes.INTEGER,
     nego_price: {
       type: DataTypes.INTEGER,
       validate: {

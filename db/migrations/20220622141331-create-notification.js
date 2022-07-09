@@ -27,6 +27,14 @@ module.exports = {
         },
         allowNull: false
       },
+      nego_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'negotiations',
+          key: 'id'
+        },
+        allowNull: true
+      },  
       nego_price: {
         type: Sequelize.INTEGER
       },

@@ -74,7 +74,7 @@ module.exports = {
                 where: { id: id }
             })
             if (!wishData) { return response(res, 404, false, 'Wishlist not found', null); }
-            else if (wishData.user_id === req.user.id) { return response(res, 403, false, 'You are not allowed to delete this wishlist.', null) }
+            else if (wishData.user_id !== req.user.id) { return response(res, 403, false, 'You are not allowed to delete this wishlist.', null) }
             await wishData.destroy()
             return response(res, 200, true, 'Success', null)
         } catch (error) {

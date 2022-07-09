@@ -52,5 +52,20 @@ module.exports = {
                 return response(res, 500, false, "Internal Server Error", null);
             }
         }
+    },
+    deleteAllNotification: async (req,res) => {
+        try {
+            const destroy = await notification.destroy({
+                where: { user_id: req.user.id },
+            })
+            return response(res, 200, false, "Berhasil menghapus notification", null)
+        } catch (error) {
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null);
+            } else {
+                return response(res, 500, false, "Internal Server Error", null);
+            }
+        }
     }
+
 }

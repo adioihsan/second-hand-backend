@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       this.hasMany(models.wishlist, {foreignKey: 'product_id'})
       this.hasMany(models.negotiation, {foreignKey: 'product_id'})
+      this.hasMany(models.notification, {foreignKey: 'product_id'})
       this.belongsTo(models.user, {foreignKey: 'user_id'})
       this.belongsToMany(models.category, {through: 'product_to_categories', foreignKey: 'product_id'})
     }

@@ -82,6 +82,7 @@ router.get("/negotiations/me", auth, negotiationPvtCon.getSellerNegotiations)
 /* Negtification API */
 router.get("/notifications", auth, notificationPvtCon.getAllNotifByUser)
 router.patch("/notification/:id/checked", auth, notificationPvtCon.patchNotifChecked)
+router.delete("/notifications", auth, notificationPvtCon.deleteAllNotification)
 
 router.use(errorHandleJWT)
 

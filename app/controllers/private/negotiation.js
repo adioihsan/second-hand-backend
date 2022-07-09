@@ -41,14 +41,16 @@ module.exports = {
                     return response(res, 401, false, "Negosiasi telah diterima, silahkan hubungi penjual!", null)
                 } else if (negotiationData.status == Constant.REJECTED) {
                     const negoUpdate = await negotiationData.update({ price: nego_price, status: Constant.PENDING })
-                    await notification.add({
+                    const dataUpdate = {
                         category_id: 2,
                         product_id: productData.id,
                         user_id: productData.user_id,
+                        nego_id: negoUpdate.id,
                         price: productData.price,
                         nego_price: nego_price,
                         status: Constant.PENDING
-                    })
+                    }
+                    await notification.add(dataUpdate)
                     return response(res, 200, false, "Harga tawaranmu berhasil dikirim ke penjual", negoUpdate)
                 } 
             }
@@ -58,12 +60,14 @@ module.exports = {
                 price: nego_price,
                 status: Constant.PENDING
             })
+            console.log("Checked");
             // Notification to Seller
             await notification.add({
                 category_id: 2,
-                product_id: negoData.id,
+                product_id: negoData.product_id,
                 user_id: productData.user_id,
                 price: productData.price,
+                nego_id: negoData.id,
                 nego_price: nego_price,
                 status: Constant.PENDING
             })
@@ -88,13 +92,13 @@ module.exports = {
             const negotiationData = await negotiation.findOne({
                 where: { id: id }
             })
-            if (!negotiationData) { return response(res, 404, false, 'Not Found', null) }
+            if (!negotiationData) { 
+                return response(res, 404, false, 'Not Found', null) 
+            }
             else if (negotiationData.user_id_buyer !== req.user.id) { 
                 return response(res, 403, false, 'Forbidden', null)
             }
-            
             return response(res, 200, false, "Sukses", negotiationData)
-
         } catch (error) {
             console.log(error)
             if (error.name === 'SequelizeDatabaseError') {
@@ -212,15 +216,16 @@ module.exports = {
             // Notif to Buyer
             await notification.add({
                 category_id: 2,
-                product_id: negotiationData.id,
+                product_id: negotiationData.product_id,
                 user_id: negotiationData.user_id_buyer,
                 price: negotiationData.price,
+                nego_id: negotiationData.nego_id,
                 nego_price: negotiationData.nego_price,
                 status: Constant.ACCEPTED
             })
             const updateData = await negotiationData.update({ status: Constant.ACCEPTED })
 
-            return response(res, 200, true, 'Negosiasi berhasil, silahkan ubah status produk!', updateData)
+            return response(res, 200, true, 'Negosiasi berhasil, silahkan hubungi pembeli!', updateData)
         } catch (error) {
             console.log(error)
             if (error.name === 'SequelizeDatabaseError') {
@@ -260,14 +265,16 @@ module.exports = {
             }
             const updateData = await negotiationData.update({ status: Constant.REJECTED })
             // Notifi buyer
-            await notification.add({
+            const dataUpdate = {
                 category_id: 2,
-                product_id: negotiationData.id,
+                product_id: negotiationData.product_id,
                 user_id: negotiationData.user_id_buyer,
-                price: negotiationData.price,
-                nego_price: negotiationData.nego_price,
+                nego_id: negotiationData.id,
+                price: negotiationData.product.price,
+                nego_price: negotiationData.price,
                 status: Constant.REJECTED
-            })
+            }
+            await notification.add(dataUpdate)
             return response(res, 200, true, 'Negosiasi ditolak', updateData)
         } catch (error) {
             console.log(error)
@@ -282,4 +289,30 @@ module.exports = {
             }
         }
     },
+
+    patchNegotiation: async (req, res) => {
+        try {
+            const id = req.params.id
+            const negotiationData = await negotiation.findOne({
+                where: {id: id}, 
+                include: [
+                    { model: product, include: { model: user } }     
+                ]
+            })
+            if (!negotiationData) {
+                return response(res, 404, false, "Negosiasi tidak ditemukan", null)
+            } else if (negotiationData.product.user.id != req.user.id) {
+                return response(res, 403, false, "Kamu tidak bisa mengedit negosiasi ini", null)
+            }
+            
+            return response(res, 200, true, "Negosiasi selesai dan Produk terjual", null)
+        } catch (error) {
+            console.log(error)
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null)
+            } else {
+                return response(res, 500, false, "Internal Server Error", null)
+            }
+        }
+    }
 }
