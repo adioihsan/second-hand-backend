@@ -13,10 +13,10 @@ module.exports = (sequelize, DataTypes) => {
     product_id: DataTypes.INTEGER,
     price: DataTypes.INTEGER,
     status: {
-      type: DataTypes.STRING, // 1. Pending 2. Accepted 3. Rejected
+      type: DataTypes.STRING, // 1. Pending 2. Accepted 3. Rejected 4.Done
       allowNull: false,
       validate: {
-        is: /^(pending|accepted|rejected)$/
+        is: /^(pending|accepted|rejected|done)$/
       }
     }
   }, {

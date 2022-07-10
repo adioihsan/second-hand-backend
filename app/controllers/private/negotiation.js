@@ -1,7 +1,7 @@
 const { user, user_detail, product, negotiation, notification } = require("../../models")
 const response = require("../../../utils/formatResponse")
-const { Op } = require('sequelize')
 const Constant = require('../../../utils/constant')
+const { Op } = require('sequelize')
 
 module.exports = {
     /* Negotiation */
@@ -12,7 +12,7 @@ module.exports = {
 
             const userDetailData = await user_detail.findOne({ where: { user_id: jwtData.id} })
             if (!userDetailData.name || !userDetailData.address || !userDetailData.phone) {
-                return response(res, 400, false, 'Please complete your profile first.', null)
+                return response(res, 400, false, 'Tolong lengkapi profil kamu dulu yah.', null)
             }
             const productData = await product.findOne({
                 where: { 
@@ -41,14 +41,16 @@ module.exports = {
                     return response(res, 401, false, "Negosiasi telah diterima, silahkan hubungi penjual!", null)
                 } else if (negotiationData.status == Constant.REJECTED) {
                     const negoUpdate = await negotiationData.update({ price: nego_price, status: Constant.PENDING })
-                    await notification.add({
+                    const dataUpdate = {
                         category_id: 2,
                         product_id: productData.id,
                         user_id: productData.user_id,
+                        nego_id: negoUpdate.id,
                         price: productData.price,
                         nego_price: nego_price,
                         status: Constant.PENDING
-                    })
+                    }
+                    await notification.add(dataUpdate)
                     return response(res, 200, false, "Harga tawaranmu berhasil dikirim ke penjual", negoUpdate)
                 } 
             }
@@ -58,16 +60,18 @@ module.exports = {
                 price: nego_price,
                 status: Constant.PENDING
             })
+            console.log("Checked");
             // Notification to Seller
             await notification.add({
                 category_id: 2,
-                product_id: negoData.id,
+                product_id: negoData.product_id,
                 user_id: productData.user_id,
                 price: productData.price,
+                nego_id: negoData.id,
                 nego_price: nego_price,
                 status: Constant.PENDING
             })
-            return response(res, 200, true, "Success", negoData)
+            return response(res, 200, true, "Berhasil", negoData)
         } catch (error) {
             console.log(error)
             if (error.name === 'SequelizeDatabaseError') {
@@ -77,7 +81,7 @@ module.exports = {
             } else if(error.name === 'SequelizeUniqueConstraintError') {
                 return response(res, 400, false, error.errors[0].message, null);
             } else {
-                return response(res, 500, false, "Internal Server Error", null);
+                return response(res, 500, false, "Server Internal lagi error nih", null);
             }
         }
     }, 
@@ -88,19 +92,19 @@ module.exports = {
             const negotiationData = await negotiation.findOne({
                 where: { id: id }
             })
-            if (!negotiationData) { return response(res, 404, false, 'Not Found', null) }
+            if (!negotiationData) { return response(res, 404, false, 'Tidak ditemukan', null) }
             else if (negotiationData.user_id_buyer !== req.user.id) { 
-                return response(res, 403, false, 'Forbidden', null)
+                return response(res, 403, false, 'Dilarang', null)
             }
             
-            return response(res, 200, false, "Sukses", negotiationData)
+            return response(res, 200, false, "Berhasil", negotiationData)
 
         } catch (error) {
             console.log(error)
             if (error.name === 'SequelizeDatabaseError') {
                 return response(res, 400, false, error.message, null)
             } else {
-                return response(res, 500, false, "Internal Server Error", null)
+                return response(res, 500, false, "Server Internal lagi error nih", null)
             }
         }
     },  
@@ -109,7 +113,7 @@ module.exports = {
         try {
             const page = parseInt(req.query.page) || 1
             if (page < 1) {
-                return response(res, 400, false, 'Page Harus bilangan bulat lebih besar dari 0', null)
+                return response(res, 400, false, 'Halaman harus bilangan bulat lebih besar dari 0', null)
             }
             const limit = parseInt(req.query.limit) || 12
             const offset = (parseInt(page) - 1) * limit
@@ -133,13 +137,13 @@ module.exports = {
             negotiationsData.page = parseInt(page)
             negotiationsData.nextPage = page < negotiationsData.totalPage ? parseInt(page) + 1 : null
             negotiationsData.prevPage = page > 1 ? parseInt(page) - 1 : null
-            return response(res, 200, true, "Sukses", negotiationsData)
+            return response(res, 200, true, "Berhasil", negotiationsData)
         } catch (error) {
             console.log(error)
             if (error.name === 'SequelizeDatabaseError') {
                 return response(res, 400, false, error.message, null)
             } else {
-                return response(res, 500, false, "Internal Server Error", null)
+                return response(res, 500, false, "Server Internal lagi error nih", null)
             }
         }
     },
@@ -148,7 +152,7 @@ module.exports = {
         try {
             const page = parseInt(req.query.page) || 1
             if (page < 1) {
-                return response(res, 400, false, 'Page Harus bilangan bulat lebih besar dari 0', null)
+                return response(res, 400, false, 'Halaman harus bilangan bulat lebih besar dari 0', null)
             }
             const status = req.query.filter
 
@@ -178,13 +182,13 @@ module.exports = {
             negotiationsData.page = parseInt(page)
             negotiationsData.nextPage = page < negotiationsData.totalPage ? parseInt(page) + 1 : null
             negotiationsData.prevPage = page > 1 ? parseInt(page) - 1 : null
-            return response(res, 200, true, 'Sukses', negotiationsData)
+            return response(res, 200, true, 'Berhasil', negotiationsData)
         } catch (error) {
             console.log(error)
             if (error.name === 'SequelizeDatabaseError') {
                 return response(res, 400, false, error.message, null)
             } else {
-                return response(res, 500, false, "Internal Server Error", null)
+                return response(res, 500, false, "Server Internal lagi error nih", null)
             }
         }
     },
@@ -212,15 +216,16 @@ module.exports = {
             // Notif to Buyer
             await notification.add({
                 category_id: 2,
-                product_id: negotiationData.id,
+                product_id: negotiationData.product_id,
                 user_id: negotiationData.user_id_buyer,
                 price: negotiationData.price,
+                nego_id: negotiationData.nego_id,
                 nego_price: negotiationData.nego_price,
                 status: Constant.ACCEPTED
             })
             const updateData = await negotiationData.update({ status: Constant.ACCEPTED })
 
-            return response(res, 200, true, 'Negosiasi berhasil, silahkan ubah status produk!', updateData)
+            return response(res, 200, true, 'Negosiasi berhasil, silahkan hubungi pembeli!', updateData)
         } catch (error) {
             console.log(error)
             if (error.name === 'SequelizeDatabaseError') {
@@ -230,7 +235,7 @@ module.exports = {
             } else if(error.name === 'SequelizeUniqueConstraintError') {
                 return response(res, 400, false, error.errors[0].message, null);
             } else {
-                return response(res, 500, false, "Internal Server Error", null);
+                return response(res, 500, false, "Server Internal lagi error nih", null);
             }
         }
     },
@@ -260,14 +265,16 @@ module.exports = {
             }
             const updateData = await negotiationData.update({ status: Constant.REJECTED })
             // Notifi buyer
-            await notification.add({
+            const dataUpdate = {
                 category_id: 2,
-                product_id: negotiationData.id,
+                product_id: negotiationData.product_id,
                 user_id: negotiationData.user_id_buyer,
-                price: negotiationData.price,
-                nego_price: negotiationData.nego_price,
+                nego_id: negotiationData.id,
+                price: negotiationData.product.price,
+                nego_price: negotiationData.price,
                 status: Constant.REJECTED
-            })
+            }
+            await notification.add(dataUpdate)
             return response(res, 200, true, 'Negosiasi ditolak', updateData)
         } catch (error) {
             console.log(error)
@@ -278,8 +285,70 @@ module.exports = {
             } else if(error.name === 'SequelizeUniqueConstraintError') {
                 return response(res, 400, false, error.errors[0].message, null);
             } else {
-                return response(res, 500, false, "Internal Server Error", null);
+                return response(res, 500, false, "Server Internal lagi error nih", null);
             }
         }
     },
+
+    patchNegotiation: async (req, res) => {
+        try {
+            const id = req.params.id
+            const status = req.body.status
+            const isBoolean = (status) => {
+                return (status == "true" || status == "false" )
+            }
+            if (!isBoolean(status)) {
+                return response(res, 400, false, 'Status harus boolean', null)
+            }
+            const negotiationData = await negotiation.findOne({
+                where: {id: id, status: Constant.PENDING}, 
+                include: [
+                    { model: product, include: { model: user } }     
+                ]
+            })
+            if (!negotiationData) {
+                return response(res, 404, false, "Negosiasi tidak ditemukan", null)
+            } else if (negotiationData.product.user.id != req.user.id) {
+                return response(res, 403, false, "Kamu tidak bisa mengedit negosiasi ini", null)
+            }
+            await negotiationData.product.update({
+                status: !status
+            })
+            if(!status){
+                const updateNegotiation = await negotiationData.update({ status: Constant.REJECTED })
+                 // Notif to Buyer
+                await notification.add({
+                    category_id: 2,
+                    product_id: updateNegotiation.product_id,
+                    user_id: updateNegotiation.user_id_buyer,
+                    price: updateNegotiation.price,
+                    nego_id: updateNegotiation.nego_id,
+                    nego_price: updateNegotiation.nego_price,
+                    status: Constant.REJECTED
+                })
+                return response(res, 200, true, "Negosiasi ditolak", updateNegotiation)
+            }
+            const updateNegotiation = await negotiationData.update({ status: Constant.DONE })  
+            // Notif to Buyer
+            await notification.add({
+                category_id: 2,
+                product_id: updateNegotiation.product_id,
+                user_id: updateNegotiation.user_id_buyer,
+                price: updateNegotiation.price,
+                nego_id: updateNegotiation.nego_id,
+                nego_price: updateNegotiation.nego_price,
+                status: Constant.DONE
+            })
+            return response(res, 200, true, "Negosiasi selesai dan Produk terjual", updateNegotiation)
+        } catch (error) {
+            console.log(error)
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null)
+            } else {
+                return response(res, 500, false, "Internal Server Error", null)
+            }
+        }
+    },
+
+    
 }

@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notEmpty: {
-          msg: 'Product ID is required'
+          msg: 'id produk tidak boleh kosong'
         }
       }
     },
@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notEmpty: {
-          msg: 'User ID is required'
+          msg: 'id user tidak boleh kosong'
         }
       }
     }

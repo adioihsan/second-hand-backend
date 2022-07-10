@@ -62,6 +62,7 @@ router.patch('/product/:id/sold', auth, productPvtCont.patchProductSold)
 router.put('/product/:id', auth, productPvtCont.putProduct) 
 router.get('/product/:id/me', auth, productPvtCont.getProduct)
 router.get('/products/me', auth, productPvtCont.getSellerProduct)
+router.get('/product/:id/negotiation', auth, productPvtCont.getProductNegotiattion)
 
 router.post("/wish", auth, whistlistPvtCon.postProductWishlist);           
 router.get("/wish/:id", auth, whistlistPvtCon.getProductWishlist);         
@@ -74,14 +75,14 @@ router.post("/negotiation", auth, negotiationPvtCon.postNegotiation)
 router.get("/negotiation/:id", auth, negotiationPvtCon.getNegotiation)
 router.patch("/negotiation/:id/confirm", auth, negotiationPvtCon.patchSellerConfirmNegotiation)
 router.patch("/negotiation/:id/reject", auth, negotiationPvtCon.patchSellerRejectNegotiation)
-// router.delete("/negotiation/:id", auth, negotiationPvtCon.deleteNegotiation);
-// router.put("/negotiation/:id", auth, negotiationPvtCon.putNegotiation);
 router.get("/negotiations", auth, negotiationPvtCon.getBuyerNegotiations);
-router.get("/negotiations/me", auth, negotiationPvtCon.getSellerNegotiations)
+router.get("/negotiations/me", auth, negotiationPvtCon.getSellerNegotiations);
+router.patch("/negotiation/:id", auth, negotiationPvtCon.patchNegotiation);
 
 /* Negtification API */
 router.get("/notifications", auth, notificationPvtCon.getAllNotifByUser)
 router.patch("/notification/:id/checked", auth, notificationPvtCon.patchNotifChecked)
+router.delete("/notifications", auth, notificationPvtCon.deleteAllNotification)
 
 router.use(errorHandleJWT)
 

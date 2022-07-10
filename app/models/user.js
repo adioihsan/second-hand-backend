@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
         email: this.email,
         name: name,
         photo: image
-      }, process.env.JWT_SECRET, { expiresIn: '5h' });
+      }, process.env.JWT_SECRET, { expiresIn: '25h' });
       return token;
     }
 
