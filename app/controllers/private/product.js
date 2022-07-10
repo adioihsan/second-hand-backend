@@ -368,25 +368,29 @@ module.exports = {
             return response(res, 500, false, "Internal Server Error", null);
         }   
     },
-    getProductIsNegotiated: async (req, res) => {
-        // try {
-        //     const product_id = req.params.product_id
-        //     const user_id = req.user.id
+    getProductNegotiattion: async (req, res) => {
+        try {
+            const product_id = req.params.id
+            const user_id = req.user.id
 
-        //     // const productData
-        //     const productData = await product.findOne({
-        //         where: { product_id: product_id },
-        //         include: [
-        //             { model: negotiation, where: { user_id_buyer: user_id } },
-        //         ]
-        //     })
-            
-        // } catch (error) {
-        //     console.log(error);
-        //     if (error.name === 'SequelizeDatabaseError') {
-        //         return response(res, 400, false, error.message, null);
-        //     }
-        //     return response(res, 500, false, "Internal Server Error", null);
-        // }
+            const negotiationData = await negotiation.findOne({
+                where: {
+                    product_id: product_id,
+                    user_id_buyer: user_id,
+                },
+                include: { model: product, attributes: ['id', 'name'] }
+            })
+
+            if (!negotiationData) {
+                return response(res, 404, false, "Negosiasi tidak ditemukan", null)
+            } 
+            return response(res, 200, true, "Negosiasi ditemukan", negotiationData)
+        } catch (error) {
+            console.log(error);
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null);
+            }
+            return response(res, 500, false, "Internal Server Error", null);
+        }
     }
 }
