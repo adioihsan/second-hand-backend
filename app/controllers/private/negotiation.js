@@ -1,7 +1,7 @@
 const { user, user_detail, product, negotiation, notification } = require("../../models")
 const response = require("../../../utils/formatResponse")
-const { Op } = require('sequelize')
 const Constant = require('../../../utils/constant')
+const { Op } = require('sequelize')
 
 module.exports = {
     /* Negotiation */
@@ -293,8 +293,15 @@ module.exports = {
     patchNegotiation: async (req, res) => {
         try {
             const id = req.params.id
+            const status = req.body.status
+            const isBoolean = (status) => {
+                return (status == "true" || status == "false" )
+            }
+            if (!isBoolean(status)) {
+                return response(res, 400, false, 'Status harus boolean', null)
+            }
             const negotiationData = await negotiation.findOne({
-                where: {id: id}, 
+                where: {id: id, status: Constant.PENDING}, 
                 include: [
                     { model: product, include: { model: user } }     
                 ]
@@ -304,8 +311,35 @@ module.exports = {
             } else if (negotiationData.product.user.id != req.user.id) {
                 return response(res, 403, false, "Kamu tidak bisa mengedit negosiasi ini", null)
             }
-            
-            return response(res, 200, true, "Negosiasi selesai dan Produk terjual", null)
+            await negotiationData.product.update({
+                status: !status
+            })
+            if(!status){
+                const updateNegotiation = await negotiationData.update({ status: Constant.REJECTED })
+                 // Notif to Buyer
+                await notification.add({
+                    category_id: 2,
+                    product_id: updateNegotiation.product_id,
+                    user_id: updateNegotiation.user_id_buyer,
+                    price: updateNegotiation.price,
+                    nego_id: updateNegotiation.nego_id,
+                    nego_price: updateNegotiation.nego_price,
+                    status: Constant.REJECTED
+                })
+                return response(res, 200, true, "Negosiasi ditolak", updateNegotiation)
+            }
+            const updateNegotiation = await negotiationData.update({ status: Constant.DONE })  
+            // Notif to Buyer
+            await notification.add({
+                category_id: 2,
+                product_id: updateNegotiation.product_id,
+                user_id: updateNegotiation.user_id_buyer,
+                price: updateNegotiation.price,
+                nego_id: updateNegotiation.nego_id,
+                nego_price: updateNegotiation.nego_price,
+                status: Constant.DONE
+            })
+            return response(res, 200, true, "Negosiasi selesai dan Produk terjual", updateNegotiation)
         } catch (error) {
             console.log(error)
             if (error.name === 'SequelizeDatabaseError') {

@@ -74,10 +74,9 @@ router.post("/negotiation", auth, negotiationPvtCon.postNegotiation)
 router.get("/negotiation/:id", auth, negotiationPvtCon.getNegotiation)
 router.patch("/negotiation/:id/confirm", auth, negotiationPvtCon.patchSellerConfirmNegotiation)
 router.patch("/negotiation/:id/reject", auth, negotiationPvtCon.patchSellerRejectNegotiation)
-// router.delete("/negotiation/:id", auth, negotiationPvtCon.deleteNegotiation);
-// router.put("/negotiation/:id", auth, negotiationPvtCon.putNegotiation);
 router.get("/negotiations", auth, negotiationPvtCon.getBuyerNegotiations);
-router.get("/negotiations/me", auth, negotiationPvtCon.getSellerNegotiations)
+router.get("/negotiations/me", auth, negotiationPvtCon.getSellerNegotiations);
+router.patch("/negotiation/:id", auth, negotiationPvtCon.patchNegotiation);
 
 /* Negtification API */
 router.get("/notifications", auth, notificationPvtCon.getAllNotifByUser)

@@ -63,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING, // 1. Pending 2. Accepted 3. Rejected
       allowNull: false,
       validate: {
-        is: /^(pending|accepted|rejected)$/
+        is: /^(pending|accepted|rejected|done)$/
       }
     },
     is_checked: {
