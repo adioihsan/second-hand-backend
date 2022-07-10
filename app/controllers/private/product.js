@@ -4,6 +4,8 @@ const fs = require("fs");
 const { Op } = require('sequelize');
 const helper = require('../../../utils/helpers');
 const Constant = require("../../../utils/constant");
+const { deleteImage } = require("../../libs/firebaseStorage");
+
 
 module.exports = {
     /* Product */
@@ -97,11 +99,7 @@ module.exports = {
                 for (let i = 0; i < imageUrls.length; i++) {
                     await image.destroy({ where: { url: imageUrls[i] } });
                 }
-                imageUrls.map(url => {
-                    fs.unlink("public/images/" + url, (err) => {
-                        if (err) console.log(err)
-                    })
-                })
+                imageUrls.map(url => deleteImage(url) )
                 return response(res, 200, true, 'Produk berhasil dihapus', null)
             }
             return response(res, 400, false, 'Produk berhasil dihapus', null)
@@ -370,4 +368,29 @@ module.exports = {
             return response(res, 500, false, "Server Internal lagi error nih", null);
         }   
     },
+    getProductNegotiattion: async (req, res) => {
+        try {
+            const product_id = req.params.id
+            const user_id = req.user.id
+
+            const negotiationData = await negotiation.findOne({
+                where: {
+                    product_id: product_id,
+                    user_id_buyer: user_id,
+                },
+                include: { model: product, attributes: ['id', 'name'] }
+            })
+
+            if (!negotiationData) {
+                return response(res, 404, false, "Negosiasi tidak ditemukan", null)
+            } 
+            return response(res, 200, true, "Negosiasi ditemukan", negotiationData)
+        } catch (error) {
+            console.log(error);
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null);
+            }
+            return response(res, 500, false, "Internal Server Error", null);
+        }
+    }
 }
