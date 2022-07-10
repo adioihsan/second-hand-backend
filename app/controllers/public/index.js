@@ -7,14 +7,14 @@ module.exports = {
     getCategories: async (req, res) => {
         try {
             const categories = await category.findAll();
-            if (!categories) { return response(res, 404, false, 'Category Detail not found', categories) }
-            return response(res, 200, true, 'Success', categories);
+            if (!categories) { return response(res, 404, false, 'Rincian kategori tidak ditemukan', categories) }
+            return response(res, 200, true, 'Berhasil', categories);
         } catch (error) {
             console.log(error);
             if (error.name === 'SequelizeDatabaseError') {
                 return response(res, 400, false, error.message, null);
             }
-            return response(res, 500, false, "Internal Server Error", null);
+            return response(res, 500, false, "Server Internal lagi error nih", null);
         }
     },
     getProduct: async (req, res) => {
@@ -28,7 +28,7 @@ module.exports = {
                 ],
             })
             
-            if (!productData) { return response(res, 404, false, 'Product not found', null) }
+            if (!productData) { return response(res, 404, false, 'Produk tidak ditemukan', null) }
             const data = productData.toJSON()
             const userData = {
                 id: productData.id,
@@ -38,13 +38,13 @@ module.exports = {
             }
             delete data.user
             data.user = userData
-            return response(res, 200, true, 'Success', data);
+            return response(res, 200, true, 'Berhasil', data);
         } catch (error) {
             console.log(error);
             if (error.name === 'SequelizeDatabaseError') {
                 return response(res, 400, false, error.message, null);
             }
-            return response(res, 500, false, "Internal Server Error", null);
+            return response(res, 500, false, "Server Internal lagi error nih", null);
         }
     },
     getProducts: async (req, res) => {
@@ -53,7 +53,7 @@ module.exports = {
             const search = req.query.search || ''
             const page = parseInt(req.query.page) || 1
             if (page < 1) {
-                return response(res, 400, false, 'Page must be integer greater than 0', null)
+                return response(res, 400, false, 'Halaman harus bilangan bulat lebih besar dari 0', null)
             }
             const limit = parseInt(req.query.limit) || 12
             const offset = (parseInt(page) - 1) * limit
@@ -103,14 +103,14 @@ module.exports = {
             productData.page = parseInt(page)
             productData.nextPage = page < productData.totalPage ? parseInt(page) + 1 : null
             productData.prevPage = page > 1 ? parseInt(page) - 1 : null
-            return response(res, 200, true, 'Success', productData);
+            return response(res, 200, true, 'Berhasil', productData);
 
         } catch (error) {
             console.log(error);
             if (error.name === 'SequelizeDatabaseError') {
                 return response(res, 400, false, error.message, null);
             }
-            return response(res, 500, false, "Internal Server Error", null);
+            return response(res, 500, false, "Server Internal lagi error nih", null);
         }
     }, 
     getProductsSeller: async (req, res) => {
@@ -124,7 +124,7 @@ module.exports = {
             }
             const page = parseInt(req.query.page) || 1
             if (page < 1) {
-                return response(res, 400, false, 'Page must be integer greater than 0', null)
+                return response(res, 400, false, 'Halaman harus lebih besar dari 0', null)
             }
             const limit = parseInt(req.query.limit) || 12
             const offset = (parseInt(page) - 1) * limit
@@ -156,14 +156,14 @@ module.exports = {
             productData.page = parseInt(page)
             productData.nextPage = page < productData.totalPage ? parseInt(page) + 1 : null
             productData.prevPage = page > 1 ? parseInt(page) - 1 : null
-            return response(res, 200, true, 'Success', productData);
+            return response(res, 200, true, 'Berhasil', productData);
 
         } catch (error) {
             console.log(error);
             if (error.name === 'SequelizeDatabaseError') {
                 return response(res, 400, false, error.message, null);
             }
-            return response(res, 500, false, "Internal Server Error", null);
+            return response(res, 500, false, "Server Internal lagi error nih", null);
         }   
     }
 }

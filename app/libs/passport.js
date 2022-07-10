@@ -15,7 +15,7 @@ passport.use(new JwtStrategy(options, async (payload, done) => {
     const data = await user.findByPk(payload.id) // Cari user yang datanya bakal dikirim ke middleware auth.js
 
     if(!data) {
-        return done(null, false, { message: 'User not found' })
+        return done(null, false, { message: 'Pengguna tidak ditemukan' })
     }
     
     return done(null, data)

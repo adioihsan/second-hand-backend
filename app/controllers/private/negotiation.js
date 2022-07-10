@@ -12,7 +12,7 @@ module.exports = {
 
             const userDetailData = await user_detail.findOne({ where: { user_id: jwtData.id} })
             if (!userDetailData.name || !userDetailData.address || !userDetailData.phone) {
-                return response(res, 400, false, 'Please complete your profile first.', null)
+                return response(res, 400, false, 'Tolong lengkapi profil kamu dulu yah.', null)
             }
             const productData = await product.findOne({
                 where: { 
@@ -71,7 +71,7 @@ module.exports = {
                 nego_price: nego_price,
                 status: Constant.PENDING
             })
-            return response(res, 200, true, "Success", negoData)
+            return response(res, 200, true, "Berhasil", negoData)
         } catch (error) {
             console.log(error)
             if (error.name === 'SequelizeDatabaseError') {
@@ -81,7 +81,7 @@ module.exports = {
             } else if(error.name === 'SequelizeUniqueConstraintError') {
                 return response(res, 400, false, error.errors[0].message, null);
             } else {
-                return response(res, 500, false, "Internal Server Error", null);
+                return response(res, 500, false, "Server Internal lagi error nih", null);
             }
         }
     }, 
@@ -92,19 +92,19 @@ module.exports = {
             const negotiationData = await negotiation.findOne({
                 where: { id: id }
             })
-            if (!negotiationData) { 
-                return response(res, 404, false, 'Not Found', null) 
-            }
+            if (!negotiationData) { return response(res, 404, false, 'Tidak ditemukan', null) }
             else if (negotiationData.user_id_buyer !== req.user.id) { 
-                return response(res, 403, false, 'Forbidden', null)
+                return response(res, 403, false, 'Dilarang', null)
             }
-            return response(res, 200, false, "Sukses", negotiationData)
+            
+            return response(res, 200, false, "Berhasil", negotiationData)
+
         } catch (error) {
             console.log(error)
             if (error.name === 'SequelizeDatabaseError') {
                 return response(res, 400, false, error.message, null)
             } else {
-                return response(res, 500, false, "Internal Server Error", null)
+                return response(res, 500, false, "Server Internal lagi error nih", null)
             }
         }
     },  
@@ -113,7 +113,7 @@ module.exports = {
         try {
             const page = parseInt(req.query.page) || 1
             if (page < 1) {
-                return response(res, 400, false, 'Page Harus bilangan bulat lebih besar dari 0', null)
+                return response(res, 400, false, 'Halaman harus bilangan bulat lebih besar dari 0', null)
             }
             const limit = parseInt(req.query.limit) || 12
             const offset = (parseInt(page) - 1) * limit
@@ -137,13 +137,13 @@ module.exports = {
             negotiationsData.page = parseInt(page)
             negotiationsData.nextPage = page < negotiationsData.totalPage ? parseInt(page) + 1 : null
             negotiationsData.prevPage = page > 1 ? parseInt(page) - 1 : null
-            return response(res, 200, true, "Sukses", negotiationsData)
+            return response(res, 200, true, "Berhasil", negotiationsData)
         } catch (error) {
             console.log(error)
             if (error.name === 'SequelizeDatabaseError') {
                 return response(res, 400, false, error.message, null)
             } else {
-                return response(res, 500, false, "Internal Server Error", null)
+                return response(res, 500, false, "Server Internal lagi error nih", null)
             }
         }
     },
@@ -152,7 +152,7 @@ module.exports = {
         try {
             const page = parseInt(req.query.page) || 1
             if (page < 1) {
-                return response(res, 400, false, 'Page Harus bilangan bulat lebih besar dari 0', null)
+                return response(res, 400, false, 'Halaman harus bilangan bulat lebih besar dari 0', null)
             }
             const status = req.query.filter
 
@@ -182,13 +182,13 @@ module.exports = {
             negotiationsData.page = parseInt(page)
             negotiationsData.nextPage = page < negotiationsData.totalPage ? parseInt(page) + 1 : null
             negotiationsData.prevPage = page > 1 ? parseInt(page) - 1 : null
-            return response(res, 200, true, 'Sukses', negotiationsData)
+            return response(res, 200, true, 'Berhasil', negotiationsData)
         } catch (error) {
             console.log(error)
             if (error.name === 'SequelizeDatabaseError') {
                 return response(res, 400, false, error.message, null)
             } else {
-                return response(res, 500, false, "Internal Server Error", null)
+                return response(res, 500, false, "Server Internal lagi error nih", null)
             }
         }
     },
@@ -235,7 +235,7 @@ module.exports = {
             } else if(error.name === 'SequelizeUniqueConstraintError') {
                 return response(res, 400, false, error.errors[0].message, null);
             } else {
-                return response(res, 500, false, "Internal Server Error", null);
+                return response(res, 500, false, "Server Internal lagi error nih", null);
             }
         }
     },
@@ -285,7 +285,7 @@ module.exports = {
             } else if(error.name === 'SequelizeUniqueConstraintError') {
                 return response(res, 400, false, error.errors[0].message, null);
             } else {
-                return response(res, 500, false, "Internal Server Error", null);
+                return response(res, 500, false, "Server Internal lagi error nih", null);
             }
         }
     },

@@ -47,14 +47,14 @@ module.exports = (sequelize, DataTypes) => {
     nego_price: {
       type: DataTypes.INTEGER,
       validate: {
-        isInt: { msg: 'Price must be integer' },
+        isInt: { msg: 'Harga harus bilangan bulat' },
         min: 0
       }
     },
     price: {
       type: DataTypes.INTEGER,
       validate: {
-        isInt: { msg: 'Price must be integer' },
+        isInt: { msg: 'Harga harus berupa angka' },
         min: 0
       }
     },
