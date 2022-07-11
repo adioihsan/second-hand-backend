@@ -8,6 +8,9 @@ var dotenv = require('dotenv').config()
 const response = require('./utils/formatResponse')
 const indexRouter = require('./routes/index')
 
+const swaggerJSON = require('./swagger.json');
+const swaggerUI = require('swagger-ui-express');
+
 const cors = require('cors');
 app.use(cors());
 app.use(function(req, res, next) {
@@ -23,6 +26,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerJSON));
 
 
 // catch 404 and forward to error handler
@@ -38,7 +42,7 @@ app.use(function(err, req, res, next) {
   
   const status = err.status || 500;
   if (err.name === "NotFoundError") {
-    return response(res, status, false, "Not Found", null)
+    return response(res, status, false, "Url Not Found", null)
   } 
   return response(res, false, status, err.message, null)
 });

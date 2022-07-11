@@ -90,10 +90,26 @@ module.exports = {
         try {
             const id = req.params.id;
             const negotiationData = await negotiation.findOne({
-                where: { id: id }
+                where: { id: id },
+                include: {
+                    model: product, attributes: ['name', 'price'],
+                    include: [
+                        { 
+                            model: product, 
+                            attributes: ['id', 'name', 'price', 'images_url', 'user_id'],
+                            where: {  user_id: req.user.id }
+                        }, 
+                        {
+                            model: user, as: 'user_buyer', attributes: ['id'], include: [{
+                                model: user_detail,
+                                attributes: ['name', 'city', 'image', 'phone']
+                            }],
+                        }
+                    ],
+                }
             })
             if (!negotiationData) { return response(res, 404, false, 'Tidak ditemukan', null) }
-            else if (negotiationData.user_id_buyer !== req.user.id) { 
+            else if (negotiationData.user_id_buyer !== req.user.id || negotiationData.product.user.id !== req.user.id) { 
                 return response(res, 403, false, 'Dilarang', null)
             }
             
@@ -295,17 +311,17 @@ module.exports = {
             const id = req.params.id
             const status = req.body.status
             const isBoolean = (status) => {
-                return (status == "true" || status == "false" )
+                return (status == "true" || status == "false" || status == true || status == false )
             }
             if (!isBoolean(status)) {
                 return response(res, 400, false, 'Status harus boolean', null)
             }
             const negotiationData = await negotiation.findOne({
-                where: {id: id, status: Constant.PENDING}, 
+                where: {id: id, status: Constant.ACCEPTED }, 
                 include: [
                     { model: product, include: { model: user } }     
                 ]
-            })
+            })  
             if (!negotiationData) {
                 return response(res, 404, false, "Negosiasi tidak ditemukan", null)
             } else if (negotiationData.product.user.id != req.user.id) {

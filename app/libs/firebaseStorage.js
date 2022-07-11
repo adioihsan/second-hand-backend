@@ -4,7 +4,6 @@ const { storage } = require("../../config/firebaseConfig")
 var path = require('path');
 global.XMLHttpRequest = require("xhr2")
 const env = process.env.NODE_ENV || 'development';
-console.log(`Menggunakan ${env} upload/Hapus Foto`)
 
 const uploudImage = async (req) => {
     

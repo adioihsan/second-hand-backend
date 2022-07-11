@@ -1,9 +1,9 @@
-![staging](https://github.com/Doritos7/second-hand-backend/actions/workflows/test.yml/badge.svg) 
+![staging](https://github.com/Doritos7/second-hand-backend/actions/workflows/staging.yml/badge.svg) 
 <!-- ![main](https://github.com/Doritos7/second-hand-backend/actions/workflows/main.yml/badge.svg) -->
 # [Backend] Second Hand Product
 
 <p align="center">
-  <img width=150 src="https://storage.googleapis.com/secondhand-be-test.appspot.com/secondhand.png" alt="Logo" align="center">
+  <img width=150 src="https://storage.googleapis.com/secondhand-be-test.appspot.com/images/secondhand.png" alt="Logo" align="center">
 </p>
 
 
