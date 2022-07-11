@@ -23,12 +23,6 @@ jobs:
         run: npm install
       - name: Install sequlize-cli
         run: npm install sequelize-cli
-      # - name: Undo Migrate
-      #   run: npx sequelize db:migrate:undo:all --env test_production
-      - name: Undo Migrate 1
-        run: |
-          npx sequelize db:migrate:undo --name=20220623121145-add-column-city-to-user-detail.js --env test_production
-          npx sequelize db:migrate:undo --name=20220622141331-create-notification.js --env test_production
       - name: Migrate DB
         run: npx sequelize db:migrate --env test_production
       # - name: Seed DB
