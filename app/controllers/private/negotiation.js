@@ -91,29 +91,30 @@ module.exports = {
             const id = req.params.id;
             const negotiationData = await negotiation.findOne({
                 where: { id: id },
-                include: {
-                    model: product, attributes: ['name', 'price'],
-                    include: [
-                        { 
-                            model: product, 
-                            attributes: ['id', 'name', 'price', 'images_url', 'user_id'],
-                            where: {  user_id: req.user.id }
-                        }, 
-                        {
-                            model: user, as: 'user_buyer', attributes: ['id'], include: [{
-                                model: user_detail,
-                                attributes: ['name', 'city', 'image', 'phone']
-                            }],
+                include: [
+                    { 
+                        model: product, 
+                        attributes: ['id', 'name', 'price', 'images_url', 'user_id'],
+                        include: {
+                            model: user, attributes: ['id']
                         }
-                    ],
-                }
+                    }, 
+                    {
+                        model: user, as: 'user_buyer', attributes: ['id'], include: [{
+                            model: user_detail,
+                            attributes: ['name', 'city', 'image', 'phone']
+                        }],
+                    }
+                ],
             })
             if (!negotiationData) { return response(res, 404, false, 'Tidak ditemukan', null) }
-            else if (negotiationData.user_id_buyer !== req.user.id || negotiationData.product.user.id !== req.user.id) { 
-                return response(res, 403, false, 'Dilarang', null)
+            else if (negotiationData.user_id_buyer === req.user.id 
+                || negotiationData.product.user.id === req.user.id
+                ) { 
+                    return response(res, 200, false, "Berhasil", negotiationData)
             }
+            return response(res, 403, false, 'Dilarang', null)
             
-            return response(res, 200, false, "Berhasil", negotiationData)
 
         } catch (error) {
             console.log(error)
@@ -235,7 +236,7 @@ module.exports = {
                 product_id: negotiationData.product_id,
                 user_id: negotiationData.user_id_buyer,
                 price: negotiationData.price,
-                nego_id: negotiationData.nego_id,
+                nego_id: negotiationData.id,
                 nego_price: negotiationData.nego_price,
                 status: Constant.ACCEPTED
             })
@@ -338,7 +339,7 @@ module.exports = {
                     product_id: updateNegotiation.product_id,
                     user_id: updateNegotiation.user_id_buyer,
                     price: updateNegotiation.price,
-                    nego_id: updateNegotiation.nego_id,
+                    nego_id: updateNegotiation.id,
                     nego_price: updateNegotiation.nego_price,
                     status: Constant.REJECTED
                 })
@@ -351,10 +352,33 @@ module.exports = {
                 product_id: updateNegotiation.product_id,
                 user_id: updateNegotiation.user_id_buyer,
                 price: updateNegotiation.price,
-                nego_id: updateNegotiation.nego_id,
+                nego_id: id,
                 nego_price: updateNegotiation.nego_price,
                 status: Constant.DONE
             })
+
+            const negotiationsData = await negotiation.findAll({
+                where: { 
+                    product_id: negotiationData.product.id,
+                    [Op.not]: { id: id }
+                } 
+            })
+
+            negotiationsData.forEach(async (data) => {
+                await data.update({ status: Constant.REJECTED })
+                // Notif to Buyer
+                await notification.add({
+                    category_id: 2,
+                    product_id: updateNegotiation.product_id,
+                    user_id: updateNegotiation.user_id_buyer,
+                    price: updateNegotiation.price,
+                    nego_id: id,
+                    nego_price: updateNegotiation.nego_price,
+                    status: Constant.REJECTED
+                })
+            })
+
+
             return response(res, 200, true, "Negosiasi selesai dan Produk terjual", updateNegotiation)
         } catch (error) {
             console.log(error)
@@ -365,6 +389,5 @@ module.exports = {
             }
         }
     },
-
-    
+ 
 }
