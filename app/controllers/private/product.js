@@ -392,5 +392,32 @@ module.exports = {
             }
             return response(res, 500, false, "Internal Server Error", null);
         }
+    },
+    getProductWish: async (req, res) => {
+        try {
+            const product_id = req.params.id
+            const jwtData = req.user
+            
+            const wish = await wishlist.findOne({ 
+                where: { 
+                    product_id: product_id, 
+                    user_id: jwtData.id 
+                },
+                include: [
+                    { model: user, attributes: ['id', 'email'] }, { model: product, attributes: ['id', 'name', 'user_id', 'status']}
+                ]
+            });
+
+            if (!wish) {
+                return response(res, 404, false, "Wishlist tidak ditemukan", null)
+            } 
+            return response(res, 200, true, "Wishlist ditemukan", wish)
+        } catch (error) {
+            console.log(error);
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null);
+            }
+            return response(res, 500, false, "Internal Server Error", null);
+        }
     }
 }
