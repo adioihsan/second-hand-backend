@@ -690,6 +690,46 @@
         ]
       }
     },
+    "/product/{id}/wish": {
+      "get": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Get my wish of product",
+        "description": "Returns a product wish",
+        "operationId": "getMyWishOfProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID product",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/products": {
       "get": {
         "tags": [
