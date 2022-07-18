@@ -63,6 +63,7 @@ router.put('/product/:id', auth, productPvtCont.putProduct)
 router.get('/product/:id/me', auth, productPvtCont.getProduct)
 router.get('/products/me', auth, productPvtCont.getSellerProduct)
 router.get('/product/:id/negotiation', auth, productPvtCont.getProductNegotiattion)
+router.get('/product/:id/wish', auth, productPvtCont.getProductWish)
 
 router.post("/wish", auth, whistlistPvtCon.postProductWishlist);           
 router.get("/wish/:id", auth, whistlistPvtCon.getProductWishlist);         
