@@ -16,7 +16,7 @@ module.exports = {
                 limit: limit, offset: offset,
                 where : { user_id: req.user.id},
                 include : [
-                    { model: product, attributes: ['name', 'price']},
+                    { model: product, attributes: ['name', 'price', 'image_url']},
                     { model: notification_category,as: 'category', attributes: ['title'] }, 
                 ]
             })
