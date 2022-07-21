@@ -1,0 +1,1692 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Second Hand API",
+    "description": "This is an API document for our products\n",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "fauzanjr1@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "https://secondhand-be.herokuapp.com",
+      "description": "Production"
+    },
+    {
+      "url": "https://secondhand-be-test.herokuapp.com",
+      "description": "Test"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Everything about user authentication"
+    },
+    {
+      "name": "User",
+      "description": "Everything about user"
+    },
+    {
+      "name": "Image",
+      "description": "Everything about image"
+    },
+    {
+      "name": "Category",
+      "description": "Everything about category"
+    },
+    {
+      "name": "Product",
+      "description": "Everything about our products"
+    },
+    {
+      "name": "Seller",
+      "description": "Everything about seller"
+    },
+    {
+      "name": "Wish",
+      "description": "Everything about wishes"
+    },
+    {
+      "name": "Notification",
+      "description": "Everything about notification"
+    },
+    {
+      "name": "Negotiation",
+      "description": "Everything about negotiation"
+    }
+  ],
+  "paths": {
+    "/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register a new user",
+        "operationId": "registerUser",
+        "requestBody": {
+          "description": "User that needs to be added",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/register_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succeed Create User Account"
+          },
+          "405": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login User",
+        "description": "Input user needed",
+        "operationId": "loginUser",
+        "requestBody": {
+          "description": "Login",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/login_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "login succeed"
+          },
+          "400": {
+            "description": "Invalid username or password"
+          }
+        }
+      }
+    },
+    "/forgot-password": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Forgot Password",
+        "description": "Forgot Password",
+        "operationId": "forgotPassword",
+        "requestBody": {
+          "description": "Login",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/forgotpassword_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login succeed"
+          },
+          "400": {
+            "description": "Invalid username or password"
+          }
+        }
+      }
+    },
+    "/reset-password": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Reset password",
+        "description": "Input user needed",
+        "operationId": "resetPassword",
+        "requestBody": {
+          "description": "Login",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/resetpassword_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succeed"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/user-detail": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get All new get-user-detail",
+        "description": "Returns a map of status codes to quantities",
+        "operationId": "getUserDetail",
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Add a new product",
+        "description": "Returns a map of status codes to quantities",
+        "operationId": "putUserDetail",
+        "requestBody": {
+          "description": "Update Products",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/userdetail_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful to add product"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/profile": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get profile user",
+        "description": "Returns user profile",
+        "operationId": "getProfile",
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/profile/reset-password": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Reset Password",
+        "description": "Returns user profile",
+        "operationId": "putProfileResetPassword",
+        "requestBody": {
+          "description": "Reset Password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/profile_resetpassword_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succeed"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/image": {
+      "post": {
+        "tags": [
+          "Image"
+        ],
+        "summary": "post images",
+        "description": "Returns a map of status codes to quantities",
+        "operationId": "images",
+        "requestBody": {
+          "description": "Create image",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/image_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/image/{image_url}": {
+      "delete": {
+        "tags": [
+          "Image"
+        ],
+        "summary": "Delete image",
+        "operationId": "deleteImage",
+        "parameters": [
+          {
+            "name": "image_url",
+            "in": "path",
+            "description": "ID of user detail that needs to be fetched",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "example": "1_23423_434343.jpg"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/categories": {
+      "get": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "Get All Categories",
+        "description": "Returns a map of status codes to quantities",
+        "operationId": "getCategories",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/wish": {
+      "post": {
+        "tags": [
+          "Wish"
+        ],
+        "summary": "Add a wish",
+        "description": "Returns a map of status codes to quantities",
+        "operationId": "addwish",
+        "requestBody": {
+          "description": "Create Wish",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/wish_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/wish/{id}": {
+      "get": {
+        "tags": [
+          "Wish"
+        ],
+        "summary": "Get wish by id",
+        "operationId": "getWish",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user detail that needs to be fetched",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Wish"
+        ],
+        "summary": "Delete Wish",
+        "description": "Returns a map of status codes to quantities",
+        "operationId": "deleteWish",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of wish to return",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/wishes": {
+      "get": {
+        "tags": [
+          "Wish"
+        ],
+        "summary": "Get Wishes",
+        "description": "Returns a map of status codes to quantities",
+        "operationId": "getwishes",
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/product": {
+      "post": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Add a new product",
+        "description": "Returns a product details",
+        "operationId": "addproduct",
+        "requestBody": {
+          "description": "Create Products",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/product_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful to add product"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/product/{id}": {
+      "get": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Get product by id",
+        "operationId": "getProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of product that needs to be fetched",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Update product by id",
+        "operationId": "updateProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of product that needs to be updated",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Update Product",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/product_id_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Delete product by id",
+        "operationId": "deleteProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of product that needs to be deleted",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/product/{id}/me": {
+      "get": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Get My Product By id",
+        "description": "Returns a map of status codes to quantities",
+        "operationId": "getMyProductDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID product",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/product/{id}/negotiation": {
+      "get": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Get my negotiation of product",
+        "description": "Returns a product negotiation",
+        "operationId": "getMyNegotiationOfProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID product",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/product/{id}/wish": {
+      "get": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Get my wish of product",
+        "description": "Returns a product wish",
+        "operationId": "getMyWishOfProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID product",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/products": {
+      "get": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Get All Products",
+        "description": "Returns a map of product",
+        "operationId": "getProducts",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category_id",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/products/me": {
+      "get": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Get all seller product",
+        "description": "Returns a map of product",
+        "operationId": "getSellerProducts",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "## Filter Product Seller\n     1.  Get all product\n     2.  Get sold product\n     3.  Get unrelease product\n     4.  Get product that on someone else's whislist\n \n",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                1,
+                2,
+                3,
+                4
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/product/{id}/release": {
+      "patch": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Update product release",
+        "description": "Returns a product detail",
+        "operationId": "patchIsReleased",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product to released",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Product released",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/id_release_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/product/{id}/sold": {
+      "patch": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Product sold",
+        "operationId": "sold",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product to sold",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Product sold",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/id_sold_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/{seller_id}/products": {
+      "post": {
+        "tags": [
+          "Seller"
+        ],
+        "summary": "Add a new product",
+        "description": "Returns a product details",
+        "operationId": "getSellerProduct",
+        "parameters": [
+          {
+            "name": "seller_id",
+            "in": "path",
+            "description": "id of seller",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful to add product"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/notifications": {
+      "get": {
+        "tags": [
+          "Notification"
+        ],
+        "summary": "Get all notification",
+        "description": "Returns a map of notification",
+        "operationId": "getNotifications",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Notification"
+        ],
+        "summary": "Delete all notification by user",
+        "operationId": "deleteAllNotification",
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/notification/{id}/checked": {
+      "patch": {
+        "tags": [
+          "Notification"
+        ],
+        "summary": "Update product release",
+        "description": "Returns a product detail",
+        "operationId": "patchNotificationChecked",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID notification",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Product released",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/id_checked_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/negotiation": {
+      "post": {
+        "tags": [
+          "Negotiation"
+        ],
+        "summary": "Add a negotiation",
+        "description": "Returns a map of status codes to quantities",
+        "operationId": "addNegotiation",
+        "requestBody": {
+          "description": "Create Wish",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/negotiation_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/negotiations": {
+      "get": {
+        "tags": [
+          "Negotiation"
+        ],
+        "summary": "Get all negotiation as buyer",
+        "description": "Returns a map of negotiation",
+        "operationId": "getNegotiationAsBuyer",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/negotiations/me": {
+      "get": {
+        "tags": [
+          "Negotiation"
+        ],
+        "summary": "Get all negotiation as seller",
+        "description": "Returns a map of negotiation",
+        "operationId": "getNegotiationAsSeller",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "rejected",
+                "accepted",
+                "done"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/negotiation/{id}": {
+      "get": {
+        "tags": [
+          "Negotiation"
+        ],
+        "summary": "Get negotiation",
+        "description": "Returns a map of negotiation",
+        "operationId": "getNegotiationByID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID negotiation",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Negotiation"
+        ],
+        "summary": "Set done or reject negotiation",
+        "description": "Update status negotiation and status product",
+        "operationId": "patchDoneNegotiation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID negotiation",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "## Set Status\n    true -> Set negotiation done and product sold, also reject others negotiation\n    false -> Reject Negotiation\n",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/negotiation_id_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/negotiation/{id}/confirm": {
+      "patch": {
+        "tags": [
+          "Negotiation"
+        ],
+        "summary": "Confirm negotiation",
+        "description": "Confirm negotiation from buyer as Seller",
+        "operationId": "patchConfirmNegotiation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID negotiation",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/negotiation/{id}/reject": {
+      "patch": {
+        "tags": [
+          "Negotiation"
+        ],
+        "summary": "Reject negotiation",
+        "description": "Reject negotiation from buyer as Seller",
+        "operationId": "patchRejectNegotiation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID negotiation",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "register_body": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "contohemail@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "duwi"
+          },
+          "name": {
+            "type": "string",
+            "example": "risma"
+          }
+        }
+      },
+      "wish_body": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "example": "1"
+          }
+        }
+      },
+      "product_body": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Kipas Angin"
+          },
+          "price": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "images_url": {
+            "type": "string",
+            "description": "Use comma (,) if have multiple image",
+            "example": "1_12345_1234.jpg,1_54321_4321.jpg"
+          },
+          "categories": {
+            "type": "array",
+            "example": [
+              1,
+              2
+            ],
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "resetpassword_body": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "contoh@gmail.com"
+          },
+          "code": {
+            "type": "string",
+            "example": "123"
+          },
+          "password": {
+            "type": "string",
+            "example": "456"
+          }
+        }
+      },
+      "product_id_body": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Kipas Angin 2"
+          },
+          "price": {
+            "type": "integer",
+            "example": 600000
+          },
+          "description": {
+            "type": "string",
+            "example": "Ini kipas angin mahal jangan beli ini"
+          },
+          "images_url": {
+            "type": "string",
+            "description": "Use comma (,) if have multiple image",
+            "example": "1_12345_1234.jpg,1_54321_4321.jpg"
+          },
+          "categories": {
+            "type": "array",
+            "example": [
+              1,
+              2
+            ],
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "id_sold_body": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "boolean"
+          }
+        }
+      },
+      "id_release_body": {
+        "type": "object",
+        "properties": {
+          "is_release": {
+            "type": "boolean"
+          }
+        }
+      },
+      "id_checked_body": {
+        "type": "object",
+        "properties": {
+          "is_release": {
+            "type": "boolean"
+          }
+        }
+      },
+      "negotiation_id_body": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "login_body": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "contohemail@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "duwi"
+          }
+        }
+      },
+      "userdetail_body": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Anvathar Yiep Yiep"
+          },
+          "city": {
+            "type": "string",
+            "example": "Semarang"
+          },
+          "address": {
+            "type": "string",
+            "example": "Semarang Tengah, Jawa Tengah"
+          },
+          "phone": {
+            "type": "string",
+            "example": "089699964999"
+          },
+          "image_url": {
+            "type": "string"
+          }
+        }
+      },
+      "negotiation_body": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "example": "1"
+          },
+          "nego_price": {
+            "type": "string",
+            "example": "3000"
+          }
+        }
+      },
+      "forgotpassword_body": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "contoh@gmail.com"
+          }
+        }
+      },
+      "profile_resetpassword_body": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "example": "ExamplePass123"
+          },
+          "new_password": {
+            "type": "string",
+            "example": "Example123Pass"
+          }
+        }
+      },
+      "image_body": {
+        "type": "object",
+        "properties": {
+          "image": {
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
