@@ -1,6 +1,6 @@
 const { user, user_detail, image } = require("../../models");
 const response = require("../../../utils/formatResponse")
-const { uploudImage, deleteImage } = require("../../libs/firebaseStorage")
+const { encrypt } = require('../../../utils/encrypt')
 
 module.exports = {
      /* User Detail */
@@ -74,4 +74,32 @@ module.exports = {
             return response(res, 500, false, "Server Internal lagi error nih", null);
         }
     },  
+    putResetPassword: async (req, res) => {
+        try {
+            const { password, new_password } = req.body
+            const jwtData = req.user;
+            if(!password || !new_password) { return response(res, 400, false, 'Password tidak boleh kosong!', null) }
+            const userData = await user.findOne({ where: { id: jwtData.id } })
+            if (!userData) { return response(res, 404, false, 'Pengguna tidak ditemukan', null) }
+            if (!userData.checkPassword(password)) { 
+                return response(res, 400, false, 'Password salah', null) 
+            }
+            const newPassword = encrypt(new_password)
+            const updatedUser = await userData.update({  password: newPassword })
+            
+            const dataResponse = updatedUser.dataValues
+            delete dataResponse.password
+            delete dataResponse.createdAt
+            delete dataResponse.is_verified
+            
+            if (updatedUser) { return response(res, 200, true, 'Berhasil update password', dataResponse) }
+            return response(res, 400, false, 'Gagal update password', null)
+        } catch (error) {
+            console.log(error);
+            if (error.name === 'SequelizeDatabaseError') {
+                return response(res, 400, false, error.message, null);
+            }
+            return response(res, 500, false, "Server Internal lagi error nih", null);
+        }
+    }
 }

@@ -51,6 +51,7 @@ router.get('/:seller_id/products', publicController.getProductsSeller)
 router.put('/user-detail', auth, uploudSingle, userPvtCont.putUserDetail)
 router.get('/user-detail', auth, userPvtCont.getUserDetail)
 router.get("/profile", auth, userPvtCont.getProfile)
+router.put("/profile/reset-password", auth, userPvtCont.putResetPassword)
 
 router.post('/image', auth, uploudSingle, imagePvtCont.postImage)
 router.delete('/image', auth, imagePvtCont.deleteImage)

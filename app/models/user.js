@@ -1,6 +1,6 @@
 'use strict';
 const { Model } = require('sequelize')
-const { encrypt, comparePassword} = require('../../utils/encrypt')
+const { encrypt, comparePassword } = require('../../utils/encrypt')
 const jwt = require('jsonwebtoken');
 
 module.exports = (sequelize, DataTypes) => {
