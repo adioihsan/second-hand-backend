@@ -248,6 +248,34 @@
         ]
       }
     },
+    "/profile/reset-password": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Reset Password",
+        "description": "Returns user profile",
+        "operationId": "putProfileResetPassword",
+        "requestBody": {
+          "description": "Reset Password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/profile_resetpassword_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succeed"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
     "/image": {
       "post": {
         "tags": [
@@ -1622,6 +1650,19 @@
           "email": {
             "type": "string",
             "example": "contoh@gmail.com"
+          }
+        }
+      },
+      "profile_resetpassword_body": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "example": "ExamplePass123"
+          },
+          "new_password": {
+            "type": "string",
+            "example": "Example123Pass"
           }
         }
       },
