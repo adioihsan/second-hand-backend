@@ -1,5 +1,6 @@
 ![staging](https://github.com/Doritos7/second-hand-backend/actions/workflows/staging.yml/badge.svg) 
-<!-- ![main](https://github.com/Doritos7/second-hand-backend/actions/workflows/main.yml/badge.svg) -->
+![main](https://github.com/Doritos7/second-hand-backend/actions/workflows/main.yml/badge.svg)
+
 # [Backend] Second Hand Product
 
 <p align="center">
