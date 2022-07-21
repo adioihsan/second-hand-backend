@@ -273,7 +273,12 @@
           "400": {
             "description": "Invalid input"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/image": {
