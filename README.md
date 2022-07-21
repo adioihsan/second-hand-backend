@@ -12,7 +12,9 @@ This is a Backend Repository for Second Hand Products Application. To complete t
 
 
 ## Also see 
-- [Staging Deploy Backend](https://secondhand-be-test.herokuapp.com)
+- [Staging Deploy Backend](https://secondhand-be-test.herokuapp.com/docs)
+- [Production Deploy Backend](https://secondhand-be-test.herokuapp.com/docs)
+- [Staging Deploy Frontend](https://secondhand-test.herokuapp.com)
 - [Frontend Repository](https://github.com/Doritos7/second-hand-frontend)
 
 
