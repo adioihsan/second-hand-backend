@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Socket</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <input type="text" id="userid">
+    <button type="button" id="connect">connect</button>
+    <button type="button" id="disconnect">disconnect</button>
+</body>
+<script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
+<script>
+    var user_id = 0
+    var fcm_token = ''
+    
+    const socket = io("http://localhost:3000", {
+        autoConnect: false
+    })
+    console.log(socket);
+
+    // socket.emit("START", {
+    //     userId: user_id
+    // })
+
+    $("#connect").click(async function(){
+        user_id = $("#userid").val()
+        await socket.connect();
+        await socket.emit("start", {
+            userId: user_id
+        })
+        await socket.on("fcm", )
+        console.log(socket);
+    })
+
+    $("#disconnect").click(function(){
+        socket.disconnect();
+        console.log(socket);
+    })
+
+    socket.on("notification", function(args){
+        console.log("Ada Notifikasi")
+        console.log(args)
+    })
+
+
+    
+</script>
+</html>

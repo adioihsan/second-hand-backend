@@ -22,6 +22,8 @@ module.exports = {
         try {
             const jwtData = req.user; 
             const { url } = req.body
+            console.log(url);
+            if (!url) { return response(res, 400, false, 'Url tidak ada!', null) }
             const urlArray = url.split("_") 
             const idUserInImage = parseInt(urlArray[0])
             if (idUserInImage !== jwtData.id) { return response(res, 400, false, 'Kamu belum terotorisasi untuk menghapus foto ini', null) }

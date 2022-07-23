@@ -1,10 +1,12 @@
 const { user, user_detail, product, product_to_category, image, category, wishlist, negotiation, notification } = require("../../models");
 const response = require("../../../utils/formatResponse"); 
-const fs = require("fs");
 const { Op } = require('sequelize');
 const helper = require('../../../utils/helpers');
 const Constant = require("../../../utils/constant");
 const { deleteImage } = require("../../libs/firebaseStorage");
+const {
+    sendReleaseProductNotification
+} = require("../../libs/socket");
 
 
 module.exports = {
@@ -119,9 +121,12 @@ module.exports = {
             // is is_release boolean
             var regex = /^(true|false)$/;
             if (!regex.test(is_release)) { return response(res, 400, false, 'is_release harus bilangan bulat (true/false)', null) }
+            
             const productData = await product.findOne({ where: { id: id } })
+            
             if (!productData) { return response(res, 404, false, 'Produk tidak ditemukan', null) }
             else if (productData.user_id !== jwtData.id) { return response(res, 403, false, 'Kamu belum terotorisasi untuk merilis produk ini', null) }
+            
             if (productData.is_release === true && is_release === "true"){
                 return response(res, 400, true, 'Produk sudah dirilis!', null)
             } else if (productData.is_release === false && is_release === "false") {
@@ -135,6 +140,11 @@ module.exports = {
                 price: productData.price,
                 status: Constant.ACCEPTED
             })
+            
+            if(is_release === "true") {
+                sendReleaseProductNotification(productData.user_id,productData.id)
+            }
+
             if (updatedProduct) {
                 if(updatedProduct.is_release == true) {
                     return response(res, 200, true, 'Produk dirilis!', updatedProduct)

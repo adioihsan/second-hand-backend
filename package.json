@@ -19,6 +19,7 @@
     "express-flash": "^0.0.2",
     "express-session": "^1.17.3",
     "firebase": "^9.8.4",
+    "firebase-admin": "^11.0.0",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^8.5.1",
     "morgan": "~1.9.1",
@@ -30,6 +31,7 @@
     "pg-hstore": "^2.3.4",
     "postman-to-openapi": "^2.2.1",
     "sequelize": "^6.20.1",
+    "socket.io": "^4.5.1",
     "swagger-ui-express": "^4.4.0",
     "xhr2": "^0.2.1"
   },

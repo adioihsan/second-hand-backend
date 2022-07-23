@@ -71,6 +71,7 @@ module.exports = {
                 nego_price: nego_price,
                 status: Constant.PENDING
             })
+            
             return response(res, 200, true, "Berhasil", negoData)
         } catch (error) {
             console.log(error)
