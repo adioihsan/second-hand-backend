@@ -22,10 +22,16 @@ module.exports = {
             socket.on("start", (args) => {
                 console.log(`START: ${args}`);
                 if (args.userId) {
-                    connectedUsers.push({ 
-                        userId: args.userId,
-                        socketId: socket.id,
-                    });
+                    const users = connectedUsers.filter((user) => 
+                        user.id == args.userId 
+                        && user.socketId == socket.id
+                    )
+                    if (users.length == 0) {
+                        connectedUsers.push({
+                            id: args.userId,
+                            socketId: socket.id
+                        });
+                    }
                 }
                 console.log("Connected Users : ", connectedUsers)
             })
