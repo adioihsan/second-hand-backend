@@ -236,9 +236,9 @@ module.exports = {
                 category_id: 2,
                 product_id: negotiationData.product_id,
                 user_id: negotiationData.user_id_buyer,
-                price: negotiationData.price,
+                price: negotiationData.product.price,
                 nego_id: negotiationData.id,
-                nego_price: negotiationData.nego_price,
+                nego_price: negotiationData.price,
                 status: Constant.ACCEPTED
             })
             const updateData = await negotiationData.update({ status: Constant.ACCEPTED })
@@ -321,7 +321,7 @@ module.exports = {
             const negotiationData = await negotiation.findOne({
                 where: {id: id, status: Constant.ACCEPTED }, 
                 include: [
-                    { model: product, include: { model: user } }     
+                    { model: product, include: { model: user } }, 
                 ]
             })  
             if (!negotiationData) {
@@ -339,9 +339,9 @@ module.exports = {
                     category_id: 2,
                     product_id: updateNegotiation.product_id,
                     user_id: updateNegotiation.user_id_buyer,
-                    price: updateNegotiation.price,
+                    price: updateNegotiation.product.price,
                     nego_id: updateNegotiation.id,
-                    nego_price: updateNegotiation.nego_price,
+                    nego_price: updateNegotiation.price,
                     status: Constant.REJECTED
                 })
                 return response(res, 200, true, "Negosiasi ditolak", updateNegotiation)
@@ -354,7 +354,7 @@ module.exports = {
                 user_id: updateNegotiation.user_id_buyer,
                 price: updateNegotiation.price,
                 nego_id: id,
-                nego_price: updateNegotiation.nego_price,
+                nego_price: updateNegotiation.price,
                 status: Constant.DONE
             })
 
@@ -362,7 +362,10 @@ module.exports = {
                 where: { 
                     product_id: negotiationData.product.id,
                     [Op.not]: { id: id }
-                } 
+                },
+                include: [
+                    { model: product, include: { model: user } }
+                ]
             })
 
             negotiationsData.forEach(async (data) => {
@@ -370,11 +373,11 @@ module.exports = {
                 // Notif to Buyer
                 await notification.add({
                     category_id: 2,
-                    product_id: updateNegotiation.product_id,
-                    user_id: updateNegotiation.user_id_buyer,
-                    price: updateNegotiation.price,
-                    nego_id: id,
-                    nego_price: updateNegotiation.nego_price,
+                    product_id: data.product_id,
+                    user_id: data.user_id_buyer,
+                    price: data.product.price,
+                    nego_id: data.id,
+                    nego_price: data.price,
                     status: Constant.REJECTED
                 })
             })
