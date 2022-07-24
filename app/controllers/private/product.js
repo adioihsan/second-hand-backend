@@ -4,9 +4,7 @@ const { Op } = require('sequelize');
 const helper = require('../../../utils/helpers');
 const Constant = require("../../../utils/constant");
 const { deleteImage } = require("../../libs/firebaseStorage");
-const {
-    sendReleaseProductNotification
-} = require("../../libs/socket");
+const { sendReleaseProductNotification } = require("../../libs/socket");
 
 
 module.exports = {
@@ -126,12 +124,16 @@ module.exports = {
             
             if (!productData) { return response(res, 404, false, 'Produk tidak ditemukan', null) }
             else if (productData.user_id !== jwtData.id) { return response(res, 403, false, 'Kamu belum terotorisasi untuk merilis produk ini', null) }
-            
-            if (productData.is_release === true && is_release === "true"){
-                return response(res, 400, true, 'Produk sudah dirilis!', null)
-            } else if (productData.is_release === false && is_release === "false") {
-                return response(res, 400, true, 'Product belum dirilis!', null)
+            console.log(`is_release: ${is_release}`)
+            if (is_release == productData.is_release) { 
+                if (is_release) { return response(res, 400, false, 'Produk sudah diterbitkan', null) }
+                else { return response(res, 400, false, 'Produk sudah tidak diterbitkan', null) }
             }
+            // if (productData.is_release === true && is_release == "true"){
+            //     return response(res, 400, true, 'Produk sudah dirilis!', null)
+            // } else if (productData.is_release === false && is_release == "false") {
+            //     return response(res, 400, true, 'Product belum dirilis!', null)
+            // }
             const updatedProduct = await productData.update({ is_release: is_release })
             await notification.add({
                 category_id: 1,
@@ -141,7 +143,8 @@ module.exports = {
                 status: Constant.ACCEPTED
             })
             
-            if(is_release === "true") {
+            if(is_release == true) {
+                console.log('terbit');
                 sendReleaseProductNotification(productData.user_id,productData.id)
             }
 

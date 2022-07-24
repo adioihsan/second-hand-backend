@@ -77,6 +77,7 @@ module.exports = {
             selectedUsers.forEach((user) => {
                 io.to(user.socketId).emit("notification", [
                   "Ada notifikasi baru!",
+                  "Berhasil diterbitkan"
                 ]);
                 if (user.fcmToken) {
                     sendReleaseProductPushNotification(user.fcmToken, productId);
@@ -89,13 +90,16 @@ module.exports = {
         if (!io) {
             throw new Error("Socket Not Initialized");
         }
+        console.log("Trying to send notification to user : ", userId)
         const selectedUsers = connectedUsers.filter(
-            (user) => user.userId === userId
+            (user) => user.userId == userId
         )
+        console.log("Selected Users : ", selectedUsers)
         if (selectedUsers.length > 0) {
             selectedUsers.forEach((user) => {
                 io.to(user.socketId).emit("notification", [
                   "Ada notifikasi baru!",
+                  "Penawaran Produk"
                 ]);
                 if (user.fcmToken) {
                     sendNegotiationPushNotification(user.fcmToken, negotiationId, status);
