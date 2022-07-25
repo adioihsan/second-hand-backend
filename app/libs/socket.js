@@ -23,12 +23,12 @@ module.exports = {
                 console.log(`START: ${args}`);
                 if (args.userId) {
                     const users = connectedUsers.filter((user) => 
-                        user.id == args.userId 
+                        user.userId == args.userId 
                         && user.socketId == socket.id
                     )
                     if (users.length == 0) {
                         connectedUsers.push({
-                            id: args.userId,
+                            userId: args.userId,
                             socketId: socket.id
                         });
                     }

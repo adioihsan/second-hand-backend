@@ -981,7 +981,7 @@
       }
     },
     "/{seller_id}/products": {
-      "post": {
+      "get": {
         "tags": [
           "Seller"
         ],
