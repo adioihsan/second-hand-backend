@@ -1,9 +1,7 @@
 
-const { ref, uploadBytes, deleteObject } =  require("firebase/storage")
-const { storage } = require("../../config/firebaseConfig")
+const { app } = require("../../config/firebaseConfig")
 var path = require('path');
 global.XMLHttpRequest = require("xhr2")
-const env = process.env.NODE_ENV || 'development';
 
 const uploudImage = async (req) => {
     
@@ -12,17 +10,24 @@ const uploudImage = async (req) => {
     // Format the filename
     const fileName = req.user.id + '_' + Date.now() + '_' +  Math.floor(Math.random() * 100000) + path.extname(file.originalname)
     // Step 1. Create reference for file name in cloud storage 
-    const pathReference = (env == 'development') ? 'images/local/' + fileName : 'images/' + fileName 
-    const imageRef = ref(storage, pathReference)
+    const pathReference = `images/${fileName}`
     // Step 2. Upload the file in the bucket storage
-    return await uploadBytes(imageRef, file.buffer, { contentType: 'image/jpeg' })
+    await app.storage().bucket().file(pathReference).save(file.buffer, { contentType: 'image/jpeg' })
+    // Step 3. Return the url of the image
+    await app.storage().bucket().file(pathReference).makePublic()
+    const url = app.storage().bucket().file(pathReference).publicUrl()
+
+    // TODO : Add the url to the database table image
     
+    return {
+        url: url,
+        metadata: { name: fileName }
+    }
 }
 
-const deleteImage = async (url) => {
-    const pathReference = (env == 'development') ? 'images/local/' + url : 'images/' + url 
-    const imageRef = ref(storage, pathReference)
-    return await deleteObject(imageRef)
+const deleteImage = async (filename) => {
+    const pathReference = `images/${filename}` 
+    return await app.storage().bucket().file(pathReference).delete()
 }
 
 module.exports = { uploudImage, deleteImage }

@@ -2,6 +2,7 @@ const { user, user_detail, product, negotiation, notification } = require("../..
 const response = require("../../../utils/formatResponse")
 const Constant = require('../../../utils/constant')
 const { Op } = require('sequelize')
+const { sendNegotiationNotification } = require("../../libs/socket");
 
 module.exports = {
     /* Negotiation */
@@ -51,6 +52,7 @@ module.exports = {
                         status: Constant.PENDING
                     }
                     await notification.add(dataUpdate)
+                    sendNegotiationNotification(dataUpdate.user_id, dataUpdate.nego_id, dataUpdate.status)
                     return response(res, 200, false, "Harga tawaranmu berhasil dikirim ke penjual", negoUpdate)
                 } 
             }
@@ -71,6 +73,8 @@ module.exports = {
                 nego_price: nego_price,
                 status: Constant.PENDING
             })
+            sendNegotiationNotification(productData.user_id, negoData.id, negoData.status)
+            
             return response(res, 200, true, "Berhasil", negoData)
         } catch (error) {
             console.log(error)
@@ -240,6 +244,7 @@ module.exports = {
                 nego_price: negotiationData.price,
                 status: Constant.ACCEPTED
             })
+            sendNegotiationNotification(negotiationData.user_id_buyer, negotiationData.id, Constant.ACCEPTED)
             const updateData = await negotiationData.update({ status: Constant.ACCEPTED })
 
             return response(res, 200, true, 'Negosiasi berhasil, silahkan hubungi pembeli!', updateData)
@@ -292,6 +297,7 @@ module.exports = {
                 status: Constant.REJECTED
             }
             await notification.add(dataUpdate)
+            sendNegotiationNotification(dataUpdate.user_id, dataUpdate.nego_id, dataUpdate.status)
             return response(res, 200, true, 'Negosiasi ditolak', updateData)
         } catch (error) {
             console.log(error)
@@ -343,6 +349,7 @@ module.exports = {
                     nego_price: updateNegotiation.price,
                     status: Constant.REJECTED
                 })
+                sendNegotiationNotification(updateNegotiation.user_id_buyer, updateNegotiation.id, Constant.REJECTED)
                 return response(res, 200, true, "Negosiasi ditolak", updateNegotiation)
             }
             const updateNegotiation = await negotiationData.update({ status: Constant.DONE })  
@@ -352,10 +359,12 @@ module.exports = {
                 product_id: updateNegotiation.product_id,
                 user_id: updateNegotiation.user_id_buyer,
                 price: updateNegotiation.price,
-                nego_id: id,
+                nego_id: updateNegotiation.id,
                 nego_price: updateNegotiation.price,
                 status: Constant.DONE
             })
+            sendNegotiationNotification(updateNegotiation.user_id_buyer, updateNegotiation.id, updateNegotiation.status)
+            
 
             const negotiationsData = await negotiation.findAll({
                 where: { 
@@ -379,8 +388,8 @@ module.exports = {
                     nego_price: data.price,
                     status: Constant.REJECTED
                 })
+                sendNegotiationNotification(data.user_id_buyer, data.id, Constant.REJECTED)
             })
-
 
             return response(res, 200, true, "Negosiasi selesai dan Produk terjual", updateNegotiation)
         } catch (error) {
