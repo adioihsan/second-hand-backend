@@ -985,8 +985,8 @@
         "tags": [
           "Seller"
         ],
-        "summary": "Add a new product",
-        "description": "Returns a product details",
+        "summary": "Get list seller products",
+        "description": "Returns a list product of seller",
         "operationId": "getSellerProduct",
         "parameters": [
           {
