@@ -23,14 +23,14 @@ module.exports = {
         // TODO : ADD Email link or OTP to Verify EMAIL SOON? , Kalau tidak males 
         if (userDetail && otpData) {
           // Mengirim email
-          emailTransporter.sendMail(emailWelcome(name, email), (err, info) => {
-            if (err) {
-                console.log(err)
-                return response(res, 500, false, err.message, null)
-            } else {
-                console.log(info)
-            }
-          })
+          // emailTransporter.sendMail(emailWelcome(name, email), (err, info) => {
+          //   if (err) {
+          //       console.log(err)
+          //       return response(res, 500, false, err.message, null)
+          //   } else {
+          //       console.log(info)
+          //   }
+          // })
           return response(res, 200, true, 'Register Berhasil', null)
         }
         return response(res, 500, false, 'Register Gagal', null)
