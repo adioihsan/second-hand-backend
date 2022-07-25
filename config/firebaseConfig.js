@@ -24,6 +24,4 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = admin.initializeApp(firebaseConfig)
-// const storage =  getStorage(app)
-
 module.exports = { app }

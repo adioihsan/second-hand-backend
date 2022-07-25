@@ -12,12 +12,11 @@ const sendReleaseProductPushNotification = async (
         await app.messaging().send({
             notification: {
                 title: "New Product Release",
-                body: `${product.name} is now available`,
-                icon: "https://goo.gl/Fz9nrQ",
-                click_action: "https://www.google.com/",
+                body: `${product.name} is now available`
             },
             token: fcmToken,
-        })          
+        })
+        console.log("Notification sended!")          
     } catch (error) {
         console.log(error, "Error in sendReleaseProductNotification : ", error)
     }
@@ -70,6 +69,7 @@ const sendNegotiationPushNotification = async (
             notification: notificationBody,
             token: fcmToken
         })
+        console.log("Notification sended!")
     } catch (error) {
         console.log("Error :", error);
     }

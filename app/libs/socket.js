@@ -18,9 +18,7 @@ module.exports = {
 
         io.on("connect", async (socket) => {
             console.log(`A user connected with id: ${socket.id}`)
-            
             socket.on("start", (args) => {
-                console.log(`START: ${args}`);
                 if (args.userId) {
                     const users = connectedUsers.filter((user) => 
                         user.userId == args.userId 
@@ -30,33 +28,24 @@ module.exports = {
                         connectedUsers.push({
                             userId: args.userId,
                             socketId: socket.id
-                        });
+                        })
                     }
                 }
-                console.log("Connected Users : ", connectedUsers)
             })
 
             socket.on("disconnect", (reason) => {
-                console.log(`DISCONNECT`);
                 connectedUsers = connectedUsers.filter(
                   (user) => user.socketId !== socket.id
-                );
-                        
-                console.log("Connected Users :", connectedUsers);
-            });
+                )
+            })
 
             socket.on("fcm", (args) => {
-                if(!args.userId || !args.fcmToken) {
-                    return;
-                }
+                if(!args.userId || !args.fcmToken) { return; }
                 const userIdx = connectedUsers.findIndex(
-                    (user) => user.userId === args.userId
-                );
+                    (user) => user.userId == args.userId
+                )
                 if(userIdx < 0) return
-
-                connectedUsers[userIdx].fcmToken = args.fcmToken;
-                console.log("Connected Users :", connectedUsers);
-
+                connectedUsers[userIdx].fcmToken = args.fcmToken
             })
         })
         
@@ -76,8 +65,6 @@ module.exports = {
         const selectedUsers = connectedUsers.filter(
             (user) => user.userId == userId
         )
-        console.log("user Id : ", userId)
-        console.log(`User Selected : ${selectedUsers}`);
 
         if (selectedUsers.length > 0) {
             selectedUsers.forEach((user) => {
@@ -100,7 +87,6 @@ module.exports = {
         const selectedUsers = connectedUsers.filter(
             (user) => user.userId == userId
         )
-        console.log("Selected Users : ", selectedUsers)
         if (selectedUsers.length > 0) {
             selectedUsers.forEach((user) => {
                 io.to(user.socketId).emit("notification", [
