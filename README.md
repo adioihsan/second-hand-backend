@@ -15,19 +15,21 @@ This is a Backend Repository for Second Hand Products Application. To complete t
 - [Staging Deploy Backend](https://secondhand-be-test.herokuapp.com/docs)
 - [Production Deploy Backend](https://secondhand-be-test.herokuapp.com/docs)
 - [Staging Deploy Frontend](https://secondhand-test.herokuapp.com)
+- [Production Deploy Frontend](https://second-hand-lac.vercel.app)
 - [Frontend Repository](https://github.com/Doritos7/second-hand-frontend)
 
 
 ## How to use
 
 1. Install the dependencies : ``` npm install ```
-2. Make project on firebase, add storage in your project, go to GCP to make bucket storage public
-2. Setup .env file : copy the .env.example to .env and fill the values
-3. Create Database : ``` sequelize db:create || npx sequelize-cli db:create ```
-4. Run Migrations : ``` sequelize db:migrate || npx sequelize-cli db:migrate ```
-5. Run Seeders : ``` sequelize db:seed:all || npx sequelize-cli db:seed:all ```
-6. Run Project : ``` npm start ```
-7. See API Documentation :  Go to ```{{server}}/docs``` to see the Swagger API documentation . 
+2. Make project on firebase, add the firebase storage to your project and add firebase cloud messaging
+3. Download all credentials that needed for the project
+4. Setup .env file : copy the .env.example to .env and fill the values
+5. Create Database : ``` sequelize db:create || npx sequelize-cli db:create ```
+6. Run Migrations : ``` sequelize db:migrate || npx sequelize-cli db:migrate ```
+7. Run Seeders : ``` sequelize db:seed:all || npx sequelize-cli db:seed:all ```
+8. Run Project : ``` npm start ```
+9. See API Documentation :  Go to ```{{server}}/docs``` to see the Swagger API documentation . 
 
 ## Tech
 The main Technology what we use to build this application is:
@@ -38,4 +40,6 @@ The main Technology what we use to build this application is:
 4. Passport.js
 5. PostgreSQL
 6. Firebase Storage
-7. Swagger Documentation
+7. Socket.io
+8. Firebase Cloud Messaging
+9. Swagger Documentation
