@@ -2,5 +2,6 @@
 /public/images
 
 .env
+.yarn-lock
 package-lock.json
 firebase-admin-key.json
